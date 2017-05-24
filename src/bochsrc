@@ -1182,6 +1182,7 @@ speaker: enabled=1, mode=sound
 # The useless cpu instruction XCHG BX, BX causes Bochs to enter the
 # debugger mode. This might be useful for software development.
 #
+# Se usa con: xchg bx,bx
 # Example:
 #   magic_break: enabled=1
 #=======================================================================
