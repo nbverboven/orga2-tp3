@@ -33,6 +33,7 @@
 #define GDT_IDX_CODIGO_LVL_3_DESC   9
 #define GDT_IDX_DATO_LVL_0_DESC     10
 #define GDT_IDX_DATO_LVL_3_DESC     11
+#define GDT_IDX_DATO_VID_LVL_0_DESC 12
 
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */

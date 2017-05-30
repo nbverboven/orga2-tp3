@@ -42,7 +42,6 @@ start:
 
     ; Imprimir mensaje de bienvenida
     imprimir_texto_mr iniciando_mr_msg, iniciando_mr_len, 0x07, 0, 0
-    
 
     ; Habilitar A20
     call habilitar_A20
@@ -54,27 +53,31 @@ start:
     mov eax,cr0
     or eax,1 
     mov cr0,eax
-    
+
     ; Saltar a modo protegido
-    jmp 0x08:modoprotegido
+    jmp 0x0040:modoprotegido
+
+BITS 32
 modoprotegido:
+
+;xchg bx,bx ;breakpoint
 
     ; Establecer selectores de segmentos
     xor eax, eax
-    mov ax, 10000b
+    mov ax, 0x0050 ; 10<<3 1010000b 0x50
     mov ds, ax
     mov es, ax
     mov gs, ax
-    mov ax, 11000b
+    mov ax, 0x0060 ; 1100000b
     mov fs, ax
 
     ; Establecer la base de la pila
-    mov eax, pila_kernel
-    mov ss, eax
-    mov esp, eax
+    ;mov eax, pila_kernel
+    ;mov ss, eax
+    ;mov sp, eax
 
     ; Imprimir mensaje de bienvenida
-    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 1, 0
+    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
     ; Inicializar pantalla
     
