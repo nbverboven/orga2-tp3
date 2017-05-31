@@ -68,13 +68,14 @@ modoprotegido:
     mov ds, ax
     mov es, ax
     mov gs, ax
+    mov ss, ax
     mov ax, 0x0060 ; 1100000b
     mov fs, ax
 
     ; Establecer la base de la pila
-    ;mov eax, pila_kernel
-    ;mov ss, eax
-    ;mov sp, eax
+    mov eax, pila_kernel
+    mov ebp, eax
+    mov esp, eax
 
     ; Imprimir mensaje de bienvenida
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0

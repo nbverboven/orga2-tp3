@@ -11,7 +11,16 @@
 
 #include "tss.h"
 
-idt_entry idt[255] = { };
+idt_entry idt[255] = { 
+/**
+    [13] = (idt_entry){
+       (unsigned short) 0x0000, // offset 0-15
+       (unsigned short) 0x00, // segsel
+       (unsigned short) 0x0000, // attr
+       (unsigned short) 0x0000, // offset 16-31
+    }
+    */
+};
 
 idt_descriptor IDT_DESC = {
     sizeof(idt) - 1,
@@ -41,7 +50,13 @@ idt_descriptor IDT_DESC = {
     idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
 */
 
+#define IDT_ENTRY(13)                                                                                        \
+    idt[13].offset_0_15 = (unsigned short) ((unsigned int)(&_isr ## numero) & (unsigned int) 0xFFFF);        \
+    idt[13].segsel = (unsigned short) 0x00;                                                                  \
+    idt[13].attr = (unsigned short) 0x0000;                                                                  \
+    idt[13].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
+
 
 void idt_inicializar() {
-    // Excepciones
+    IDT_ENTRY(13);
 }
