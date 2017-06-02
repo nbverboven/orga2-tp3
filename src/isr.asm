@@ -11,6 +11,10 @@ BITS 32
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
 
+general_protection_msg db     'General protection fault!!!!!!, gil'
+general_protection_len equ    $ - general_protection_msg
+
+
 ;; PIC
 extern fin_intr_pic1
 
@@ -30,6 +34,15 @@ _isr%1:
 
 %endmacro
 
+%macro ISR 13
+global _isr%13
+
+_isr%13:
+    imprimir_texto_mp  general_protection_msg, general_protection_len, 0x07, 0, 0
+    jmp $
+
+%endmacro
+
 ;;
 ;; Datos
 ;; -------------------------------------------------------------------------- ;;
@@ -41,6 +54,7 @@ isrClock:            db '|/-\'
 ;; Rutina de atención de las EXCEPCIONES
 ;; -------------------------------------------------------------------------- ;;
 ISR 0
+ISR 13
 
 ;;
 ;; Rutina de atención del RELOJ
