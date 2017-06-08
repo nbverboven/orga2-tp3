@@ -10,6 +10,10 @@ global start
 extern GDT_DESC
 extern IDT_DESC
 extern idt_inicializar
+extern pintar_pantalla
+
+;;%macro pintar_pantalla 0
+;;mov ecx, 0x
 
 ;; Saltear seccion de datos
 jmp start

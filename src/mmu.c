@@ -8,6 +8,7 @@
 #include "mmu.h"
 
 void mmu_inicializar() {
+	
 }
 
 
