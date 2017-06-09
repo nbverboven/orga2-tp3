@@ -99,8 +99,8 @@ modoprotegido:
     mov ecx, ecx
 
     pintarBarras:
-    imprimir_texto_mp pintar_pantalla_msg, 1, 0x44, ecx, 0
-    imprimir_texto_mp pintar_pantalla_msg, 1, 0x11, ecx, 79 
+    imprimir_texto_mp pintar_pantalla_msg, 1, 11001100b, ecx, 0
+    imprimir_texto_mp pintar_pantalla_msg, 1, 10011001b, ecx, 79 
     loop pintarBarras
 
     ; Inicializar el manejador de memoria
