@@ -12,8 +12,8 @@ extern IDT_DESC
 extern idt_inicializar
 extern pintar_pantalla
 
-;;%macro pintar_pantalla 0
-;;mov ecx, 0x
+;%macro pintar_pantalla 0
+;mov ecx, 0x
 
 ;; Saltear seccion de datos
 jmp start
@@ -26,6 +26,11 @@ iniciando_mr_len equ    $ - iniciando_mr_msg
 
 iniciando_mp_msg db     'Iniciando kernel (Modo Protegido)...'
 iniciando_mp_len equ    $ - iniciando_mp_msg
+
+pintar_pantalla_msg db ''
+pintar_pantalla_len equ $ - 0x26EFFFFF
+
+barra_len equ $ - 1
 
 %define pila_kernel 0x27000
 
@@ -87,7 +92,17 @@ modoprotegido:
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
     ; Inicializar pantalla
-    
+
+    imprimir_texto_mp pintar_pantalla_msg, 4000, 0x22, 0, 0
+
+    mov ecx, 49
+    mov ecx, ecx
+
+    pintarBarras:
+    imprimir_texto_mp pintar_pantalla_msg, 1, 0x44, ecx, 0
+    imprimir_texto_mp pintar_pantalla_msg, 1, 0x11, ecx, 79 
+    loop pintarBarras
+
     ; Inicializar el manejador de memoria
  
     ; Inicializar el directorio de paginas
