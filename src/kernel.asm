@@ -9,48 +9,48 @@ global start
 
 extern GDT_DESC
 extern IDT_DESC
+
 extern idt_inicializar
 extern pintar_pantalla
+extern mmu_inicializar
+extern mmu_inicializar_dir_kernel
 
 %macro pintar_pantalla 0
-    ;mov eax, 50          ; eax = fila
-    ;mov ebx, 80
-    ;imul ebx            ; eax = fila * 80
-    ;mov ebx, 0          ; ebx = columna
-    ;add eax, 80        ; eax = fila * 80 + columna
+    imprimir_texto_mp pintar_pantalla_msg, 4000, 0x22, 0, 0
 
-    ; Establecer el puntero al buffer de pantalla en (fila, columna)
-    ;mov ebx, 0xb8000    ; ebx = puntero a la base del buffer de video
-    ;shl eax, 1          ; Cada posicion de la memoria de video ocupa un word
-    ;add ebx, eax        ; ebx = puntero a la posicion (fila, columna)
+    mov ecx, 44
+    mov ecx, ecx
 
-    ; Acomodar color en la parte alta de ax
-    ;mov eax,            ; eax = color
-    ;shl ax, 8           ; ah = color
-    ;mov ax, 0
+    pintarBarras:
+        imprimir_texto_mp pintar_pantalla_msg, 1, 11001100b, ecx, 0
+        imprimir_texto_mp pintar_pantalla_msg, 1, 10011001b, ecx, 79 
+    loop pintarBarras
 
-    ; Imprimir cadena
-    ;%%ciclo_cadena:
-    ;    mov     al, [edi]       ; al = caracter
-    ;    mov     [ebx], ax       ; Escribir en pantalla
-    ;    add     ebx, 2          ; Avanzar el puntero de la memoria de video
-    ;    inc     edi             ; Avanzar el puntero de la cadena
-    ;    loop    %%ciclo_cadena
-    mov ecx, 49
-fila:
-    mov ebx, 79
-columna:
-    imprimir_texto_mr iniciando_empty_msg, 1, 0x07, ecx, ebx
-    dec ebx
-    loop columna
-    dec ecx
-    cmp ecx, 0
-    jne fila
+    imprimir_texto_mp pintar_pantalla_msg, 80, 0x00, 0, 0
+    imprimir_texto_mp pintar_pantalla_msg, 400, 0x00, 45, 0
+
+    imprimir_texto_mp pintar_pantalla_nros, pintar_pantalla_nros_len, 0x0F, 46, 5
+    imprimir_texto_mp pintar_pantalla_nros, pintar_pantalla_nros_len, 0x0F, 46, 60
+
+
+    mov ecx, 5
+    mov ecx, ecx
+
+    pintarCuadrados:
+        mov eax, ecx
+        add eax, 44
+        imprimir_texto_mp pintar_pantalla_msg, 5, 01000100b, eax, 34
+        imprimir_texto_mp pintar_pantalla_msg, 5, 00010001b, eax, 39
+    loop pintarCuadrados
 
 %endmacro
 
+
 ;; Saltear seccion de datos
 jmp start
+
+%define PILA_KERNEL         0x27000
+%define BASE_PAGE_DIRECTORY 0x27000
 
 ;;
 ;; Seccion de datos.
@@ -62,7 +62,12 @@ iniciando_mr_len equ    $ - iniciando_mr_msg
 iniciando_mp_msg db     'Iniciando kernel (Modo Protegido)...'
 iniciando_mp_len equ    $ - iniciando_mp_msg
 
-%define pila_kernel 0x27000
+pintar_pantalla_msg db ''
+pintar_pantalla_nros db '1 2 3 4 5 6 7 8'
+pintar_pantalla_nros_len equ $ - pintar_pantalla_nros
+
+
+barra_len equ $ - 1
 
 ;;
 ;; Seccion de código.
@@ -114,7 +119,7 @@ modoprotegido:
     mov fs, ax
 
     ; Establecer la base de la pila
-    mov eax, pila_kernel
+    mov eax, PILA_KERNEL
     mov ebp, eax
     mov esp, eax
 
@@ -125,12 +130,18 @@ modoprotegido:
     pintar_pantalla
 
     ; Inicializar el manejador de memoria
- 
+    call mmu_inicializar
     ; Inicializar el directorio de paginas
-    
+    call mmu_inicializar_dir_kernel
+
     ; Cargar directorio de paginas
+    mov eax, BASE_PAGE_DIRECTORY
+    mov cr3, eax
 
     ; Habilitar paginacion
+    mov eax, cr0
+    or eax, 0x80000000
+    mov cr0, eax
     
     ; Inicializar tss
 

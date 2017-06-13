@@ -23,7 +23,6 @@
 #define SIZE_W                  78
 #define SIZE_H                  44
 
-
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
 #define GDT_COUNT 30
