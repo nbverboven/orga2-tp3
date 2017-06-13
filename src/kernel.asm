@@ -12,8 +12,22 @@ extern IDT_DESC
 extern idt_inicializar
 extern pintar_pantalla
 
-;%macro pintar_pantalla 0
-;mov ecx, 0x
+%macro pintar_pantalla 0
+
+imprimir_texto_mp pintar_pantalla_msg, 4000, 0x22, 0, 0
+
+    mov ecx, 49
+    mov ecx, ecx
+
+    pintarBarras:
+    imprimir_texto_mp pintar_pantalla_msg, 1, 11001100b, ecx, 0
+    imprimir_texto_mp pintar_pantalla_msg, 1, 10011001b, ecx, 79 
+    loop pintarBarras
+
+    imprimir_texto_mp pintar_pantalla_msg, 1, 11001100b, 0, 0
+    imprimir_texto_mp pintar_pantalla_msg, 1, 10011001b, 0, 79 
+
+%endmacro
 
 ;; Saltear seccion de datos
 jmp start
@@ -93,15 +107,7 @@ modoprotegido:
 
     ; Inicializar pantalla
 
-    imprimir_texto_mp pintar_pantalla_msg, 4000, 0x22, 0, 0
-
-    mov ecx, 49
-    mov ecx, ecx
-
-    pintarBarras:
-    imprimir_texto_mp pintar_pantalla_msg, 1, 11001100b, ecx, 0
-    imprimir_texto_mp pintar_pantalla_msg, 1, 10011001b, ecx, 79 
-    loop pintarBarras
+    pintar_pantalla
 
     ; Inicializar el manejador de memoria
  
