@@ -12,8 +12,42 @@ extern IDT_DESC
 extern idt_inicializar
 extern pintar_pantalla
 
-;;%macro pintar_pantalla 0
-;;mov ecx, 0x
+%macro pintar_pantalla 0
+    ;mov eax, 50          ; eax = fila
+    ;mov ebx, 80
+    ;imul ebx            ; eax = fila * 80
+    ;mov ebx, 0          ; ebx = columna
+    ;add eax, 80        ; eax = fila * 80 + columna
+
+    ; Establecer el puntero al buffer de pantalla en (fila, columna)
+    ;mov ebx, 0xb8000    ; ebx = puntero a la base del buffer de video
+    ;shl eax, 1          ; Cada posicion de la memoria de video ocupa un word
+    ;add ebx, eax        ; ebx = puntero a la posicion (fila, columna)
+
+    ; Acomodar color en la parte alta de ax
+    ;mov eax,            ; eax = color
+    ;shl ax, 8           ; ah = color
+    ;mov ax, 0
+
+    ; Imprimir cadena
+    ;%%ciclo_cadena:
+    ;    mov     al, [edi]       ; al = caracter
+    ;    mov     [ebx], ax       ; Escribir en pantalla
+    ;    add     ebx, 2          ; Avanzar el puntero de la memoria de video
+    ;    inc     edi             ; Avanzar el puntero de la cadena
+    ;    loop    %%ciclo_cadena
+    mov ecx, 49
+fila:
+    mov ebx, 79
+columna:
+    imprimir_texto_mr iniciando_empty_msg, 1, 0x07, ecx, ebx
+    dec ebx
+    loop columna
+    dec ecx
+    cmp ecx, 0
+    jne fila
+
+%endmacro
 
 ;; Saltear seccion de datos
 jmp start
@@ -21,6 +55,7 @@ jmp start
 ;;
 ;; Seccion de datos.
 ;; -------------------------------------------------------------------------- ;;
+iniciando_empty_msg db     ' '
 iniciando_mr_msg db     'Iniciando kernel (Modo Real)...'
 iniciando_mr_len equ    $ - iniciando_mr_msg
 
@@ -87,7 +122,8 @@ modoprotegido:
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
     ; Inicializar pantalla
-    
+    pintar_pantalla
+
     ; Inicializar el manejador de memoria
  
     ; Inicializar el directorio de paginas
