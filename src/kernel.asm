@@ -127,6 +127,10 @@ modoprotegido:
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
     ; Inicializar pantalla
+<<<<<<< HEAD
+=======
+
+>>>>>>> a88a9459ff99efcee9b27f6a102313ba13956e57
     pintar_pantalla
 
     ; Inicializar el manejador de memoria
