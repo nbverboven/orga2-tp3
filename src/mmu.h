@@ -15,6 +15,7 @@
 
 void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
+void mmu_proxima_pagina_libre();
 
 #endif	/* !__MMU_H__ */
 

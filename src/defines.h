@@ -22,6 +22,7 @@
 
 #define SIZE_W                  78
 #define SIZE_H                  44
+#define DIR_VIRTUAL_MAPA        0x08000000
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */

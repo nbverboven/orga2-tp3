@@ -43,6 +43,12 @@ extern mmu_inicializar_dir_kernel
         imprimir_texto_mp pintar_pantalla_msg, 5, 00010001b, eax, 39
     loop pintarCuadrados
 
+    imprimir_texto_mp pintar_pantalla_group_name, pintar_pantalla_group_name_len, 0xBF, 0, 65 
+    mov eax, 9733
+    push eax
+    imprimir_texto_mp esp, 1, 0xBF, 0, 76 
+    pop eax
+
 %endmacro
 
 
@@ -62,10 +68,12 @@ iniciando_mr_len equ    $ - iniciando_mr_msg
 iniciando_mp_msg db     'Iniciando kernel (Modo Protegido)...'
 iniciando_mp_len equ    $ - iniciando_mp_msg
 
-pintar_pantalla_msg db ''
-pintar_pantalla_nros db '1 2 3 4 5 6 7 8'
+pintar_pantalla_msg         db ''
+pintar_pantalla_nros        db '1 2 3 4 5 6 7 8'
 pintar_pantalla_nros_len equ $ - pintar_pantalla_nros
 
+pintar_pantalla_group_name  db 'Estrellitas'
+pintar_pantalla_group_name_len equ $ - pintar_pantalla_group_name
 
 barra_len equ $ - 1
 
@@ -127,10 +135,6 @@ modoprotegido:
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
     ; Inicializar pantalla
-<<<<<<< HEAD
-=======
-
->>>>>>> a88a9459ff99efcee9b27f6a102313ba13956e57
     pintar_pantalla
 
     ; Inicializar el manejador de memoria

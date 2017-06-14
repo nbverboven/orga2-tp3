@@ -25,7 +25,6 @@ void mmu_inicializar_dir_kernel() {
     page_directory[i]= 0x0;
 	}
 
-
   // Inicializo page_directory 
   int* page_table_1 = (int*) 0x28000;
 	for (int i = 0; i < 1024; ++i) {
@@ -35,12 +34,35 @@ void mmu_inicializar_dir_kernel() {
 }
 
 
-unsigned int mmu_proxima_pagina_fisica_libre(){
+unsigned int mmu_proxima_pagina_libre(){
 	unsigned int pagina = proxima_pagina_libre;
 	proxima_pagina_libre = proxima_pagina_libre + 0x1000;
 	return pagina;
 }
 
 
+int* mmu_inicializar_dir_zombi(unsigned int id_tarea, unsigned int codigo_tarea){//TODO ver parametros necesarios
+    int* page_directory = (int*) mmu_proxima_pagina_fisica_libre();  
+    // Inicializo en 0x0
+    for (int i = 1; i < 1024; ++i) {
+      page_directory[i]= 0x0;
+    }
+
+    int* page_table_1 = (int*) mmu_proxima_pagina_fisica_libre();
+    for (int i = 0; i < 1024; ++i) {
+      page_table_1[i] = ((i << 12) | 7); //user,read only,present
+    }
+
+    // Seteo la pagina_1 en el page directory del dir_zombi
+	  page_directory[0] = (int)page_table_1 + 0x7;
+
+
+
+    //Setear mapa en el page directory
+
+
+
+
+}
 
 
