@@ -57,6 +57,9 @@ jmp start
 
 %define PILA_KERNEL         0x27000
 %define BASE_PAGE_DIRECTORY 0x27000
+%define SELECTOR_CODIGO_LVL0 0x40
+%define SELECTOR_DATOS_LVL0 0x50
+%define SELECTOR_VIDEO 0x60
 
 ;;
 ;; Seccion de datos.
@@ -109,7 +112,7 @@ start:
     mov cr0,eax
 
     ; Saltar a modo protegido
-    jmp 0x0040:modoprotegido
+    jmp SELECTOR_CODIGO_LVL0:modoprotegido
 
 BITS 32
 modoprotegido:
@@ -117,13 +120,13 @@ modoprotegido:
 ;xchg bx,bx ;breakpoint
 
     ; Establecer selectores de segmentos
-    xor eax, eax
-    mov ax, 0x0050 ; 10<<3 1010000b 0x50
+    ; xor eax, eax
+    mov ax, SELECTOR_DATOS_LVL0 ; 10<<3 1010000b 0x50
     mov ds, ax
     mov es, ax
     mov gs, ax
     mov ss, ax
-    mov ax, 0x0060 ; 1100000b
+    mov ax, SELECTOR_VIDEO ; 1100000b
     mov fs, ax
 
     ; Establecer la base de la pila
@@ -139,6 +142,7 @@ modoprotegido:
 
     ; Inicializar el manejador de memoria
     call mmu_inicializar
+
     ; Inicializar el directorio de paginas
     call mmu_inicializar_dir_kernel
 
@@ -162,6 +166,8 @@ modoprotegido:
     
     ; Cargar IDT
     lidt[IDT_DESC]
+
+    ; xchg bx,bx
  
     ; Configurar controlador de interrupciones
 
