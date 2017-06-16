@@ -11,62 +11,62 @@ BITS 32
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
 
-int_0_msg db 'Devide error wacho!'
-int_0_len equ $ - int_0_msg
+msg_int_0 db 'Devide error wacho!'
+len_int_0 equ $ - msg_int_0
 
-int_1_msg db 'RESERVED vieja!'
-int_1_len equ $ -int_1_msg
+msg_int_1 db 'RESERVED vieja!'
+len_int_1 equ $ - msg_int_1
 
-int_2_msg db 'NMI interrupt!'
-int_2_len equ $ -int_2_msg
+msg_int_2 db 'NMI interrupt!'
+len_int_2 equ $ - msg_int_2
 
-int_3_msg db 'Breakpoint wachin!'
-int_3_len equ $ -int_3_msg
+msg_int_3 db 'Breakpoint wachin!'
+len_int_3 equ $ - msg_int_3
 
-int_4_msg db 'Overflow, rescatate!'
-int_4_len equ $ -int_4_msg
+msg_int_4 db 'Overflow, rescatate!'
+len_int_4 equ $ - msg_int_4
 
-int_5_msg db 'BOUND Range Exceeded, manejate!'
-int_5_len equ $ -int_5_msg
+msg_int_5 db 'BOUND Range Exceeded, manejate!'
+len_int_5 equ $ - msg_int_5
 
-int_6_msg db 'Invalid Opcode (Undefined Opcode), hiciste cualquiera!'
-int_6_len equ $ -int_6_msg
+msg_int_6 db 'Invalid Opcode (Undefined Opcode), hiciste cualquiera!'
+len_int_6 equ $ - msg_int_6
 
-int_7_msg db 'Device Not Available (No Math Coprocessor), tah re loko!'
-int_7_len equ $ -int_7_msg
+msg_int_7 db 'Device Not Available (No Math Coprocessor), tah re loko!'
+len_int_7 equ $ - msg_int_7
 
-int_8_msg db 'Double Fault, jodete!'
-int_8_len equ $ -int_8_msg
+msg_int_8 db 'Double Fault, jodete!'
+len_int_8 equ $ - msg_int_8
 
-int_9_msg db 'Coprocessor Segment Overrun (reserved)...!'
-int_9_len equ $ -int_9_msg
+msg_int_9 db 'Coprocessor Segment Overrun (reserved)...!'
+len_int_9 equ $ - msg_int_9
 
-int_10_msg db 'Invalid TSS, vo fijateh!'
-int_10_len equ $ -int_10_msg
+msg_int_10 db 'Invalid TSS, vo fijateh!'
+len_int_10 equ $ - msg_int_10
 
-int_11_msg db 'Segment Not Present, anda a buscarlo!'
-int_11_len equ $ -int_11_msg
+msg_int_11 db 'Segment Not Present, anda a buscarlo!'
+len_int_11 equ $ - msg_int_11
 
-int_12_msg db 'Stack-Segment Fault, cosas que pasan!'
-int_12_len equ $ -int_12_msg
+msg_int_12 db 'Stack-Segment Fault, cosas que pasan!'
+len_int_12 equ $ - msg_int_12
 
-int_13_msg db  'General protection fault!!!!!!, gil'
-int_13_len equ $ - int_13_msg
+msg_int_13 db  'General protection fault!!!!!!, gil'
+len_int_13 equ $ -  msg_int_13
 
-int_14_msg db 'Page Fault, arreglalo!'
-int_14_len equ $ -int_14_msg
+msg_int_14 db 'Page Fault, arreglalo!'
+len_int_14 equ $ - msg_int_14
 
-int_16_msg db 'x87 FPU Floating-Point Error (Math Fault), mira bien lo que haces!'
-int_16_len equ $ -int_16_msg
+msg_int_16 db 'x87 FPU Floating-Point Error (Math Fault), mira bien lo que haces!'
+len_int_16 equ $ - msg_int_16
 
-int_17_msg db 'Alignment Check! :-)'
-int_17_len equ $ -int_17_msg
+msg_int_17 db 'Alignment Check! :-)'
+len_int_17 equ $ - msg_int_17
 
-int_18_msg db 'Machine Check! ;)'
-int_18_len equ $ -int_18_msg
+msg_int_18 db 'Machine Check! ;)'
+len_int_18 equ $ - msg_int_18
 
-int_19_msg db 'SIMD Floating-Point Exception! :('
-int_19_len equ $ -int_19_msg
+msg_int_19 db 'SIMD Floating-Point Exception! :('
+len_int_19 equ $ - msg_int_19
 
 
 ;; PIC
@@ -79,32 +79,34 @@ extern sched_proximo_indice
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
 
-%macro ISR 0
-global _isr%0
+; %macro ISR 0
+; global _isr%0
 
-_isr%0:
-    imprimir_texto_mp  int_0_msg, int_0_len, 0x07, 0, 0
-    jmp $
+; _isr%0:
+;     imprimir_texto_mp  int_0_msg, int_0_len, 0x07, 0, 0
+;     jmp $
 
-%endmacro
+; %endmacro
 
 %macro ISR 1
 global _isr%1
 
 _isr%1:
     mov eax, %1
+    imprimir_texto_mp  int_msg_%1, int_len_%1, 0x07, 0, 0
+
     jmp $
 
 %endmacro
 
-%macro ISR 13
-global _isr%13
+; %macro ISR 13
+; global _isr%13
 
-_isr%13:
-    imprimir_texto_mp  int_13_msg, int_13_len, 0x07, 0, 0
-    jmp $
+; _isr%13:
+;     imprimir_texto_mp  int_13_msg, int_13_len, 0x07, 0, 0
+;     jmp $
 
-%endmacro
+; %endmacro
 
 ;;
 ;; Datos
