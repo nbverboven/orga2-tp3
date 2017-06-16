@@ -93,7 +93,7 @@ global _isr%1
 
 _isr%1:
     mov eax, %1
-    imprimir_texto_mp  int_msg_%1, int_len_%1, 0x07, 0, 0
+    imprimir_texto_mp  msg_int_%1, len_int_%1, 0x07, 0, 0
 
     jmp $
 

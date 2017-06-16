@@ -34,7 +34,7 @@ void mmu_inicializar_dir_kernel() {
 }
 
 
-unsigned int mmu_proxima_pagina_libre(){
+unsigned int mmu_proxima_pagina_fisica_libre(){
 	unsigned int pagina = proxima_pagina_libre;
 	proxima_pagina_libre = proxima_pagina_libre + 0x1000;
 	return pagina;
@@ -60,7 +60,7 @@ int* mmu_inicializar_dir_zombi(unsigned int id_tarea, unsigned int codigo_tarea)
 
     //Setear mapa en el page directory
 
-
+    return page_directory;
 
 
 }
