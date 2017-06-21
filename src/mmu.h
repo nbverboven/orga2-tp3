@@ -49,11 +49,11 @@ typedef struct str_pt_entry {
 } __attribute__((__packed__)) pt_entry;
 
 
-typedef struct str_dir_virtual {
-	unsigned short offset:12;
-	unsigned short page_table_index:10;
-	unsigned short page_directory_index:10;
-} __attribute__((__packed__)) dir_virtual;
+// typedef struct str_dir_virtual {
+// 	unsigned short offset:12;
+// 	unsigned short page_table_index:10;
+// 	unsigned short page_directory_index:10;
+// } __attribute__((__packed__)) dir_virtual;
 
 
 
