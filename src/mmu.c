@@ -112,21 +112,6 @@ void mmu_desmapear_pagina(unsigned int virtual, unsigned int dir_pd)
 	{
 		pt_entry* page_table = (pt_entry*) ( page_directory[indice_pd].page_table_address << 12 );
 		page_table[indice_pt].present = 0;
-
-		int nunguna_pagina_presente = 1;
-
-		for ( int i = 0; i < 1024; i++)
-		{
-			if ( page_table[i].present == 1 )
-			{
-				nunguna_pagina_presente = 0;
-			}
-		}
-
-		if ( nunguna_pagina_presente )
-		{
-			page_directory[indice_pd].present = 0;
-		}
 	}
 
 	tlbflush();
