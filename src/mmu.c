@@ -35,7 +35,6 @@ void mmu_inicializar_dir_kernel()
 	{
 		page_table_1[i] = ((i << 12) | 3);
 	}
-
 }
 
 
@@ -51,7 +50,7 @@ int* mmu_inicializar_dir_zombi(unsigned int id_tarea, unsigned int codigo_tarea)
 {
 	int* page_directory = (int*) mmu_proxima_pagina_fisica_libre();
 
-	// Identity mapping de los primeros 4Mb
+	/************** Identity mapping de los primeros 4Mb **************/
 
 	unsigned int tabla_identity_map = mmu_proxima_pagina_fisica_libre();
 
@@ -70,7 +69,7 @@ int* mmu_inicializar_dir_zombi(unsigned int id_tarea, unsigned int codigo_tarea)
 		page_table_1[i] = ((i << 12) | 3);
 	}
 
-	// Fin identity mapping
+	/********************* Fin identity mapping ***********************/
 
 
 	// // Inicializo en 0x0
@@ -91,8 +90,6 @@ int* mmu_inicializar_dir_zombi(unsigned int id_tarea, unsigned int codigo_tarea)
 	//Setear mapa en el page directory
 
 	return page_directory;
-
-
 }
 
 
@@ -105,7 +102,7 @@ void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisi
 	pd_entry* page_directory = (pd_entry*) ( cr3 | 0xFFC00000 );
 
 	// Si la tabla de páginas no existe, la creo
-	if ( !(page_directory[indice_pd].present) )
+	if ( !( page_directory[indice_pd].present ) )
 	{
 		int* nueva_pt = (int*) mmu_proxima_pagina_fisica_libre();
 
