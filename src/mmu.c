@@ -63,27 +63,28 @@ int* mmu_inicializar_dir_zombi(unsigned int id_tarea, unsigned int codigo_tarea)
 		page_directory[i]= 0;
 	}
 
-
-
-	// Inicializo page_table
-	int* page_table_1 = (int*) 0x28000;
+	// Inicializo tabla de páginas
+	int* page_table_1 = (int*) tabla_identity_map;
 	for (int i = 0; i < 1024; ++i)
 	{
 		page_table_1[i] = ((i << 12) | 3);
 	}
 
-	// Inicializo en 0x0
-	for (int i = 1; i < 1024; ++i) {
-	  page_directory[i] = 0x0;
-	}
+	// Fin identity mapping
 
-	int* page_table_1 = (int*) mmu_proxima_pagina_fisica_libre();
-	for (int i = 0; i < 1024; ++i) {
-		page_table_1[i] = ((i << 12) | 7); //user,read only,present
-	}
 
-	// Seteo la pagina_1 en el page directory del dir_zombi
-	page_directory[0] = (int)page_table_1 + 0x7;
+	// // Inicializo en 0x0
+	// for (int i = 1; i < 1024; ++i) {
+	//   page_directory[i] = 0x0;
+	// }
+
+	// int* page_table_1 = (int*) mmu_proxima_pagina_fisica_libre();
+	// for (int i = 0; i < 1024; ++i) {
+	// 	page_table_1[i] = ((i << 12) | 7); //user,read only,present
+	// }
+
+	// // Seteo la pagina_1 en el page directory del dir_zombi
+	// page_directory[0] = (int)page_table_1 + 0x7;
 
 
 
