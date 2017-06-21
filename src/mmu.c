@@ -9,40 +9,69 @@
 
 unsigned int proxima_pagina_libre;
 
-void mmu_inicializar() {
+
+void mmu_inicializar()
+{
 	proxima_pagina_libre = 0x29000;
 }
 
-void mmu_inicializar_dir_kernel() {
 
+void mmu_inicializar_dir_kernel() 
+{
 	// Inicializo directorio de paginas en pos 0x27000
-	int* page_directory = (int*) 0x27000;  // PAGE_DIRECTORY_KERNEL = 0x27000
+	int* page_directory = (int*) PAGE_DIRECTORY_KERNEL;  // PAGE_DIRECTORY_KERNEL = 0x27000
 	// Seteo directorio de tablas en pos 0x28000
-	page_directory[0] = 0x28000 + 0x3;		 // PAGE_TABLE_KERNEL = 0x28000, seteo p=1 y r/w=1
+	page_directory[0] = PAGE_TABLE_KERNEL + 0x3;		 // PAGE_TABLE_KERNEL = 0x28000, seteo p=1 y r/w=1
 
 	// Pongo todo el resto de las posiciones en cero.
-	for (int i = 1; i < 1024; ++i) { 
-	page_directory[i]= 0x0;
+	for (int i = 1; i < 1024; ++i)
+	{ 
+		page_directory[i]= 0x0;
 	}
 
-	// Inicializo page_directory 
+	// Inicializo page_table
 	int* page_table_1 = (int*) 0x28000;
-	for (int i = 0; i < 1024; ++i) {
+	for (int i = 0; i < 1024; ++i)
+	{
 		page_table_1[i] = ((i << 12) | 3);
 	}
 
 }
 
 
-unsigned int mmu_proxima_pagina_fisica_libre(){
+unsigned int mmu_proxima_pagina_fisica_libre()
+{
 	unsigned int pagina = proxima_pagina_libre;
 	proxima_pagina_libre = proxima_pagina_libre + 0x1000;
 	return pagina;
 }
 
 
-int* mmu_inicializar_dir_zombi(unsigned int id_tarea, unsigned int codigo_tarea){//TODO ver parametros necesarios
-	int* page_directory = (int*) mmu_proxima_pagina_fisica_libre();  
+int* mmu_inicializar_dir_zombi(unsigned int id_tarea, unsigned int codigo_tarea) //TODO ver parametros necesarios
+{
+	int* page_directory = (int*) mmu_proxima_pagina_fisica_libre();
+
+	// Identity mapping de los primeros 4Mb
+
+	unsigned int tabla_identity_map = mmu_proxima_pagina_fisica_libre();
+
+	 // Nivel de privilegio de supervisor, lectura/escritura, página presente
+	page_directory[0] = (tabla_identity_map << 12) | 3;
+
+	for (int i = 1; i < 1024; ++i)
+	{ 
+		page_directory[i]= 0;
+	}
+
+
+
+	// Inicializo page_table
+	int* page_table_1 = (int*) 0x28000;
+	for (int i = 0; i < 1024; ++i)
+	{
+		page_table_1[i] = ((i << 12) | 3);
+	}
+
 	// Inicializo en 0x0
 	for (int i = 1; i < 1024; ++i) {
 	  page_directory[i] = 0x0;
@@ -66,13 +95,13 @@ int* mmu_inicializar_dir_zombi(unsigned int id_tarea, unsigned int codigo_tarea)
 }
 
 
-void mmu_mapear_pagina(unsigned int virtual, unsigned int dir_pd, unsigned int fisica, 
+void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, 
 	                   unsigned char rw, unsigned char us)
 {
-	unsigned int indice_pd = (virtual & 0xFFC00000) >> 22; // Me quedo con los bits 22-31
+	unsigned int indice_pd = virtual >> 22; // Me quedo con los bits 22-31
 	unsigned int indice_pt = (virtual & 0x003FF000) >> 12; // Me quedo con los bits 12-21
 
-	pd_entry* page_directory = (pd_entry*) dir_pd;
+	pd_entry* page_directory = (pd_entry*) ( cr3 | 0xFFC00000 );
 
 	// Si la tabla de páginas no existe, la creo
 	if ( !(page_directory[indice_pd].present) )
@@ -101,12 +130,12 @@ void mmu_mapear_pagina(unsigned int virtual, unsigned int dir_pd, unsigned int f
 }
 
 
-void mmu_desmapear_pagina(unsigned int virtual, unsigned int dir_pd)
+void mmu_desmapear_pagina(unsigned int virtual, unsigned int cr3)
 {
-	unsigned int indice_pd = (virtual & 0xFFC00000) >> 22; // Me quedo con los bits 22-31
+	unsigned int indice_pd = virtual >> 22; // Me quedo con los bits 22-31
 	unsigned int indice_pt = (virtual & 0x003FF000) >> 12; // Me quedo con los bits 12-21
 
-	pd_entry* page_directory = (pd_entry*) dir_pd;
+	pd_entry* page_directory = (pd_entry*) ( cr3 | 0xFFC00000 );
 
 	if ( page_directory[indice_pd].present )
 	{

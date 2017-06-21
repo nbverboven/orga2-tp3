@@ -16,8 +16,8 @@
 void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
 void mmu_proxima_pagina_libre();
-void mmu_mapear_pagina(unsigned int virtual, unsigned int dir_pd, unsigned int fisica, unsigned char rw, unsigned char us);
-void mmu_desmapear_pagina(unsigned int virtual, unsigned int dir_pd);
+void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char rw, unsigned char us);
+void mmu_desmapear_pagina(unsigned int virtual, unsigned int cr3);
 
 
 typedef struct str_pd_entry {
