@@ -50,6 +50,7 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_
 {
 	int* page_directory = (int*) mmu_proxima_pagina_fisica_libre();
 
+
 	/************** Identity mapping de los primeros 4Mb **************/
 
 	unsigned int tabla_identity_map = mmu_proxima_pagina_fisica_libre();
@@ -71,7 +72,17 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_
 
 	/********************* Fin identity mapping ***********************/
 
+
 	// Copio el código de la tarea a la ubicación en el mapa
+	char* src = (char*) codigo_tarea;
+	char* dst = (char*) posicion_en_mapa
+
+	while (src < codigo_tarea+0x1000)
+	{
+		*dst = *src;
+		dst += 0x1;
+		src += 0x1;
+	}
 
 
 	// Mapeo las páginas de la tarea
