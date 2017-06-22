@@ -46,7 +46,7 @@ unsigned int mmu_proxima_pagina_fisica_libre()
 }
 
 
-int* mmu_inicializar_dir_zombi(unsigned int id_tarea, unsigned int codigo_tarea) //TODO ver parametros necesarios
+int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_en_mapa) //(unsigned int id_tarea, unsigned int codigo_tarea) //TODO ver parametros necesarios
 {
 	int* page_directory = (int*) mmu_proxima_pagina_fisica_libre();
 
@@ -71,23 +71,30 @@ int* mmu_inicializar_dir_zombi(unsigned int id_tarea, unsigned int codigo_tarea)
 
 	/********************* Fin identity mapping ***********************/
 
-
-	// // Inicializo en 0x0
-	// for (int i = 1; i < 1024; ++i) {
-	//   page_directory[i] = 0x0;
-	// }
-
-	// int* page_table_1 = (int*) mmu_proxima_pagina_fisica_libre();
-	// for (int i = 0; i < 1024; ++i) {
-	// 	page_table_1[i] = ((i << 12) | 7); //user,read only,present
-	// }
-
-	// // Seteo la pagina_1 en el page directory del dir_zombi
-	// page_directory[0] = (int)page_table_1 + 0x7;
+	// Copio el código de la tarea a la ubicación en el mapa
 
 
+	// Mapeo las páginas de la tarea
 
-	//Setear mapa en el page directory
+	// COMPLETAR CON LOS VALORES CORRECTOS
+	unsigned int adelante = 0;
+	unsigned int adelante_der = 0;
+	unsigned int adelante_izq = 0;
+	unsigned int der = 0;
+	unsigned int izq = 0;
+	unsigned int atras = 0;
+	unsigned int atras_izq = 0;
+	unsigned int atras_der = 0;
+
+	mmu_mapear_pagina(DIR_VIRTUAL_MAPA, (unsigned int) page_directory, posicion_en_mapa, 1, 1);
+	mmu_mapear_pagina(DIR_VIRTUAL_MAPA+0x1000, (unsigned int) page_directory, adelante, 1, 1);
+	mmu_mapear_pagina(DIR_VIRTUAL_MAPA+0x2000, (unsigned int) page_directory, adelante_der, 1, 1);
+	mmu_mapear_pagina(DIR_VIRTUAL_MAPA+0x3000, (unsigned int) page_directory, adelante_izq, 1, 1);
+	mmu_mapear_pagina(DIR_VIRTUAL_MAPA+0x4000, (unsigned int) page_directory, der, 1, 1);
+	mmu_mapear_pagina(DIR_VIRTUAL_MAPA+0x5000, (unsigned int) page_directory, izq, 1, 1);
+	mmu_mapear_pagina(DIR_VIRTUAL_MAPA+0x6000, (unsigned int) page_directory, atras, 1, 1);
+	mmu_mapear_pagina(DIR_VIRTUAL_MAPA+0x7000, (unsigned int) page_directory, atras_izq, 1, 1);
+	mmu_mapear_pagina(DIR_VIRTUAL_MAPA+0x8000, (unsigned int) page_directory, atras_der, 1, 1);
 
 	return page_directory;
 }

@@ -18,6 +18,7 @@ void mmu_inicializar_dir_kernel();
 void mmu_proxima_pagina_libre();
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char rw, unsigned char us);
 void mmu_desmapear_pagina(unsigned int virtual, unsigned int cr3);
+int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_en_mapa);
 
 
 typedef struct str_pd_entry {
