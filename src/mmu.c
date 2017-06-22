@@ -54,8 +54,8 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_
 
 	unsigned int tabla_identity_map = mmu_proxima_pagina_fisica_libre();
 
-	 // Nivel de privilegio de supervisor, lectura/escritura, página presente
-	page_directory[0] = (tabla_identity_map << 12) | 3;
+	 // Nivel de privilegio de supervisor, solo lectura, página presente
+	page_directory[0] = (tabla_identity_map << 12) | 1;
 
 	for (int i = 1; i < 1024; ++i)
 	{ 
