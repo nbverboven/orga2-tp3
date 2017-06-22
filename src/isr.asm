@@ -142,9 +142,23 @@ ISR 19
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 
+global isrReloj
+isrReloj:
+pushad
+popad
+iret
+
+
 ;;
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
+global isrTeclado
+isrTeclado:
+pushad
+popad
+iret
+
+
 
 ;;
 ;; Rutinas de atención de las SYSCALLS

@@ -43,7 +43,7 @@ idt_descriptor IDT_DESC = {
     idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
 */
 
-#define IDT_ENTRY(numero)                                                                                    \
+#define IDT_ENTRY(numero, gate_type)                                                                             \
     idt[numero].offset_0_15 = (unsigned short) ((unsigned int)(&_isr ## numero) & (unsigned int) 0xFFFF);        \
     idt[numero].segsel = (unsigned short) 0x0050;                                                            \
     idt[numero].attr = (unsigned short) 0x8E00;                                                              \
@@ -70,4 +70,6 @@ void idt_inicializar() {
     IDT_ENTRY(17);
     IDT_ENTRY(18);
     IDT_ENTRY(19);
+    IDT_ENTRY(32); // interrupción del reloj
+    IDT_ENTRY(33); // Interrupción del teclado
 }
