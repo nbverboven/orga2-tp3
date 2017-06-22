@@ -7,6 +7,8 @@
 
 #include "mmu.h"
 
+#define zombie char
+
 unsigned int proxima_pagina_libre;
 
 
@@ -46,7 +48,7 @@ unsigned int mmu_proxima_pagina_fisica_libre()
 }
 
 
-int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_en_mapa) //(unsigned int id_tarea, unsigned int codigo_tarea) //TODO ver parametros necesarios
+int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_en_mapa, unsigned int jugador) //(unsigned int id_tarea, unsigned int codigo_tarea) //TODO ver parametros necesarios
 {
 	int* page_directory = (int*) mmu_proxima_pagina_fisica_libre();
 
@@ -67,7 +69,7 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_
 	int* page_table_1 = (int*) tabla_identity_map;
 	for (int i = 0; i < 1024; ++i)
 	{
-		page_table_1[i] = ((i << 12) | 3);
+		page_table_1[i] = ((i << 12) | 1);
 	}
 
 	/********************* Fin identity mapping ***********************/
@@ -75,9 +77,9 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_
 
 	// Copio el código de la tarea a la ubicación en el mapa
 	char* src = (char*) codigo_tarea;
-	char* dst = (char*) posicion_en_mapa
+	char* dst = (char*) posicion_en_mapa;
 
-	while (src < codigo_tarea+0x1000)
+	while ( (unsigned int) src < codigo_tarea+0x1000 )
 	{
 		*dst = *src;
 		dst += 0x1;
@@ -86,6 +88,13 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_
 
 
 	// Mapeo las páginas de la tarea
+
+	zombie (*mapa)[SIZE_W] = (zombie (*)[SIZE_W]) INICIO_MAPA;
+
+	// Esto es solo para que compile
+	zombie aaaaaaahhhh = mapa[0][0];
+	aaaaaaahhhh += 0;
+	//
 
 	// COMPLETAR CON LOS VALORES CORRECTOS
 	unsigned int adelante = 0;
