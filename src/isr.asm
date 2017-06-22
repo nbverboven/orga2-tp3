@@ -142,20 +142,16 @@ ISR 19
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 
-global isrReloj
-isrReloj:
-pushad
-popad
+global _isr32
+_isr32:
 iret
 
 
 ;;
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
-global isrTeclado
-isrTeclado:
-pushad
-popad
+global _isr33
+_isr33:
 iret
 
 

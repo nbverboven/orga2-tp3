@@ -14,6 +14,8 @@ extern idt_inicializar
 extern pintar_pantalla
 extern mmu_inicializar
 extern mmu_inicializar_dir_kernel
+extern resetear_pic
+extern habilitar_pic
 
 %macro pintar_pantalla 0
 	imprimir_texto_mp pintar_pantalla_msg, 4000, 0x22, 0, 0
@@ -170,10 +172,13 @@ modoprotegido:
 ; xchg bx,bx
  
 	; Configurar controlador de interrupciones
+	call habilitar_pic
+	call resetear_pic
 
 	; Cargar tarea inicial
 
 	; Habilitar interrupciones
+	sti
 
 	; Saltar a la primera tarea: Idle
 
