@@ -24,8 +24,8 @@ extern habilitar_pic
 	mov ecx, ecx
 
 	pintarBarras:
-		imprimir_texto_mp pintar_pantalla_msg, 1, 11001100b, ecx, 0
-		imprimir_texto_mp pintar_pantalla_msg, 1, 10011001b, ecx, 79 
+		imprimir_texto_mp pintar_pantalla_msg, 1, 01000100b, ecx, 0
+		imprimir_texto_mp pintar_pantalla_msg, 1, 00010001b, ecx, 79 
 	loop pintarBarras
 
 	imprimir_texto_mp pintar_pantalla_msg, 80, 0x00, 0, 0
@@ -45,11 +45,11 @@ extern habilitar_pic
 		imprimir_texto_mp pintar_pantalla_msg, 5, 00010001b, eax, 39
 	loop pintarCuadrados
 
-	imprimir_texto_mp pintar_pantalla_group_name, pintar_pantalla_group_name_len, 0xBF, 0, 65 
-	mov eax, 9733
-	push eax
-	imprimir_texto_mp esp, 1, 0xBF, 0, 76 
-	pop eax
+	imprimir_texto_mp pintar_pantalla_group_name, pintar_pantalla_group_name_len, 00000111b, 0, 63 
+	; mov eax, 9733
+	; push eax
+	; imprimir_texto_mp esp, 1, 0xBF, 0, 76 
+	; pop eax
 
 %endmacro
 
@@ -77,7 +77,7 @@ pintar_pantalla_msg         db ''
 pintar_pantalla_nros        db '1 2 3 4 5 6 7 8'
 pintar_pantalla_nros_len equ $ - pintar_pantalla_nros
 
-pintar_pantalla_group_name  db 'Estrellitas'
+pintar_pantalla_group_name  db 'Grupo Estrellitas'
 pintar_pantalla_group_name_len equ $ - pintar_pantalla_group_name
 
 barra_len equ $ - 1
@@ -172,8 +172,8 @@ modoprotegido:
 ; xchg bx,bx
  
 	; Configurar controlador de interrupciones
-	call habilitar_pic
 	call resetear_pic
+	call habilitar_pic
 
 	; Cargar tarea inicial
 

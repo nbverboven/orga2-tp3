@@ -48,7 +48,7 @@ unsigned int mmu_proxima_pagina_fisica_libre()
 }
 
 
-int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_en_mapa, unsigned int jugador) //(unsigned int id_tarea, unsigned int codigo_tarea) //TODO ver parametros necesarios
+int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_en_mapa, unsigned int jugador) //TODO ver parametros necesarios
 {
 	int* page_directory = (int*) mmu_proxima_pagina_fisica_libre();
 
@@ -60,14 +60,14 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int posicion_
 	 // Nivel de privilegio de supervisor, solo lectura, página presente
 	page_directory[0] = (tabla_identity_map << 12) | 1;
 
-	for (int i = 1; i < 1024; ++i)
+	for ( int i = 1; i < 1024; ++i )
 	{ 
 		page_directory[i]= 0;
 	}
 
 	// Inicializo tabla de páginas
 	int* page_table_1 = (int*) tabla_identity_map;
-	for (int i = 0; i < 1024; ++i)
+	for ( int i = 0; i < 1024; ++i )
 	{
 		page_table_1[i] = ((i << 12) | 1);
 	}
@@ -133,7 +133,7 @@ void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisi
 	{
 		int* nueva_pt = (int*) mmu_proxima_pagina_fisica_libre();
 
-		for (int i = 0; i < 1024; ++i)
+		for ( int i = 0; i < 1024; ++i )
 		{
 			nueva_pt[i] = 0;
 		}
