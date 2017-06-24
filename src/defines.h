@@ -22,6 +22,9 @@
 
 #define SIZE_W                  78
 #define SIZE_H                  44
+#define TAM_PAGINA              0x1000
+#define JUGADOR_A               0
+#define JUGADOR_B               1
 
 
 /* Indices en la gdt */

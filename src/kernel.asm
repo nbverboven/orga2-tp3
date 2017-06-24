@@ -16,6 +16,9 @@ extern mmu_inicializar
 extern mmu_inicializar_dir_kernel
 extern resetear_pic
 extern habilitar_pic
+extern deshabilitar_pic
+
+extern mmu_inicializar_dir_zombi
 
 %macro pintar_pantalla 0
 	imprimir_texto_mp pintar_pantalla_msg, 4000, 0x22, 0, 0
@@ -170,8 +173,9 @@ modoprotegido:
 	lidt[IDT_DESC]
 
 ; xchg bx,bx
- 
+
 	; Configurar controlador de interrupciones
+	call deshabilitar_pic
 	call resetear_pic
 	call habilitar_pic
 
@@ -181,6 +185,29 @@ modoprotegido:
 	sti
 
 	; Saltar a la primera tarea: Idle
+
+
+	; Usé esto para testear el mapeo de los zombies
+	; mov eax, 1
+	; mov ebx, 1
+	; mov ecx, 1
+	; mov edx, 0x10000
+
+	; push eax
+	; push ebx
+	; push ecx
+	; push edx
+
+	; call mmu_inicializar_dir_zombi
+
+	; mov cr3, eax
+ ;  xchg bx,bx
+ 
+	; pop edx
+	; pop ecx
+	; pop ebx
+	; pop edi
+
 
 	; Ciclar infinitamente (por si algo sale mal...)
 	mov eax, 0xFFFF
