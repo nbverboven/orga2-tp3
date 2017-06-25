@@ -14,11 +14,13 @@ extern idt_inicializar
 extern pintar_pantalla
 extern mmu_inicializar
 extern mmu_inicializar_dir_kernel
+extern mmu_inicializar_dir_zombi
+extern tss_inicializar
+extern tss_inicializar_idle
 extern resetear_pic
 extern habilitar_pic
 extern deshabilitar_pic
 
-extern mmu_inicializar_dir_zombi
 
 %macro pintar_pantalla 0
 	imprimir_texto_mp pintar_pantalla_msg, 4000, 0x22, 0, 0
@@ -64,6 +66,7 @@ jmp start
 %define BASE_PAGE_DIRECTORY       0x27000
 %define SELECTOR_CODIGO_LVL0      0x40
 %define SELECTOR_DATOS_LVL0       0x50
+%define SELECTOR_TSS_INICIAL      0x68
 %define SELECTOR_VIDEO            0x60
 
 ;;
@@ -161,8 +164,10 @@ modoprotegido:
 	mov cr0, eax
 	
 	; Inicializar tss
+	call tss_inicializar
 
 	; Inicializar tss de la tarea Idle
+	call tss_inicializar_idle
 
 	; Inicializar el scheduler
 
@@ -180,11 +185,15 @@ modoprotegido:
 	call habilitar_pic
 
 	; Cargar tarea inicial
+	mov ax, SELECTOR_TSS_INICIAL
+	ltr ax
+	xchg bx,bx
 
 	; Habilitar interrupciones
 	sti
 
 	; Saltar a la primera tarea: Idle
+
 
 
 	; Usé esto para testear el mapeo de los zombies
@@ -201,7 +210,6 @@ modoprotegido:
 	; call mmu_inicializar_dir_zombi
 
 	; mov cr3, eax
- ;  xchg bx,bx
  
 	; pop edx
 	; pop ecx

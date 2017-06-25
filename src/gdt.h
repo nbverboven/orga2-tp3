@@ -9,8 +9,6 @@
 #define __GDT_H__
 
 #include "defines.h"
-#include "mmu.h"
-
 
 typedef struct str_gdt_descriptor {
     unsigned short  gdt_length;
