@@ -188,25 +188,25 @@ modoprotegido:
 
 
 	; Usé esto para testear el mapeo de los zombies
-	; mov eax, 1
-	; mov ebx, 1
-	; mov ecx, 1
-	; mov edx, 0x10000
+	mov eax, 1
+	mov ebx, 1
+	mov ecx, 1
+	mov edx, 0x10000
 
-	; push eax
-	; push ebx
-	; push ecx
-	; push edx
+	push eax
+	push ebx
+	push ecx
+	push edx
 
-	; call mmu_inicializar_dir_zombi
+	call mmu_inicializar_dir_zombi
 
-	; mov cr3, eax
- ;  xchg bx,bx
+	mov cr3, eax
+  xchg bx,bx
  
-	; pop edx
-	; pop ecx
-	; pop ebx
-	; pop edi
+	pop edx
+	pop ecx
+	pop ebx
+	pop edi
 
 
 	; Ciclar infinitamente (por si algo sale mal...)

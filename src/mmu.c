@@ -98,15 +98,20 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int jugador,
 
 
 	// Copio el código de la tarea a la ubicación en el mapa
-	// char* src = (char*) codigo_tarea;
-	// char* dst = (char*) DIR_VIRTUAL_MAPA;
+	char* src = (char*) codigo_tarea;
+	char* dst = (char*) posicion_en_mapa;
 
-	// while ( (unsigned int) (src) < codigo_tarea+0x1000 )
-	// {
-	// 	*dst = *src;
-	// 	dst += 0x1;
-	// 	src += 0x1;
-	// }
+	// Mapeo la página donde quiero copiar el código en el directorio del kernel
+	mmu_mapear_pagina( posicion_en_mapa, PAGE_DIRECTORY_KERNEL, posicion_en_mapa, 1, 0 );
+
+	while ( (unsigned int) (src) < codigo_tarea+0x1000 )
+	{
+		*dst = *src;
+		dst += 0x1;
+		src += 0x1;
+	}
+
+	mmu_desmapear_pagina( posicion_en_mapa, PAGE_DIRECTORY_KERNEL );
 
 	return page_directory;
 }
@@ -152,13 +157,9 @@ void mmu_desmapear_pagina(unsigned int virtual, unsigned int cr3)
 	unsigned int indice_pd = virtual >> 22; // Me quedo con los bits 22-31
 	unsigned int indice_pt = (virtual & 0x003FF000) >> 12; // Me quedo con los bits 12-21
 
-	pd_entry* page_directory = (pd_entry*) ( cr3 | 0xFFC00000 );
-
-	if ( page_directory[indice_pd].present )
-	{
-		pt_entry* page_table = (pt_entry*) ( page_directory[indice_pd].page_table_address << 12 );
-		page_table[indice_pt].present = 0;
-	}
+	pd_entry* page_directory = (pd_entry*) cr3;
+	pt_entry* page_table = (pt_entry*) ( page_directory[indice_pd].page_table_address << 12 );
+	page_table[indice_pt].present = 0;
 
 	tlbflush();
 }
