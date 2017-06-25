@@ -38,6 +38,9 @@
 #define GDT_IDX_DATO_LVL_3_DESC     11
 #define GDT_IDX_DATO_VID_LVL_0_DESC 12
 
+#define GDT_TSS_TAREA_INICIAL_DESC  13
+#define GDT_TSS_TAREA_IDLE_DESC     14
+
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */
 #define GDT_OFF_NULL_DESC           (GDT_IDX_NULL_DESC      << 3)
