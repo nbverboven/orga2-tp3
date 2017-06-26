@@ -5,6 +5,7 @@
 ; definicion de rutinas de atencion de interrupciones
 
 %include "imprimir.mac"
+%include "idle.asm"
 
 BITS 32
 
@@ -144,7 +145,15 @@ ISR 19
 
 global _isr32
 _isr32:
-iret
+    pushad
+    pushfd
+
+    call fin_intr_pic1
+    call proximo_reloj
+
+    popfd
+    popad
+    iret
 
 
 ;;
