@@ -99,14 +99,6 @@ _isr%1:
 
 %endmacro
 
-; %macro ISR 13
-; global _isr%13
-
-; _isr%13:
-;     imprimir_texto_mp  int_13_msg, int_13_len, 0x07, 0, 0
-;     jmp $
-
-; %endmacro
 
 ;;
 ;; Datos
@@ -114,6 +106,7 @@ _isr%1:
 ; Scheduler
 isrnumero:           dd 0x00000000
 isrClock:            db '|/-\'
+teclaPresionada:     db 0x0
 
 ;;
 ;; Rutina de atención de las EXCEPCIONES
@@ -144,6 +137,12 @@ ISR 19
 
 global _isr32
 _isr32:
+pushad
+call fin_intr_pic1
+
+call proximo_reloj
+
+popad
 iret
 
 
@@ -152,6 +151,20 @@ iret
 ;; -------------------------------------------------------------------------- ;;
 global _isr33
 _isr33:
+pushad
+call fin_intr_pic1
+
+xor eax, eax
+in al, 0x60
+mov ebx, [teclaPresionada]
+add ebx, 0x80
+cmp eax, ebx 
+je .fin
+        mov [teclaPresionada], al
+        imprimir_texto_mp eax, 1, 0x0f, 0, 79
+.fin:
+
+popad
 iret
 
 
