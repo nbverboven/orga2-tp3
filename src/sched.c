@@ -174,7 +174,6 @@ void sched_handler_teclado(unsigned int tecla)
 			attr = ( C_FG_BLACK | C_BG_BLACK );
 			print( asd, 25, 0, attr );
 			break;
-
 	}
 }
 
