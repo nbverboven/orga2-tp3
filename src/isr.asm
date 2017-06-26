@@ -188,7 +188,7 @@ proximo_reloj:
 	mov ebx, [isrnumero]
 	cmp ebx, 0x4
 	jl .ok
-                ov DWORD [isrnumero], 0x0
+                mov DWORD [isrnumero], 0x0
                 mov ebx, 0
 	.ok:
                 add ebx, isrClock
