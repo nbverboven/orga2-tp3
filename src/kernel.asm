@@ -14,8 +14,15 @@ extern idt_inicializar
 extern pintar_pantalla
 extern mmu_inicializar
 extern mmu_inicializar_dir_kernel
+extern mmu_inicializar_dir_zombi
+extern tss_inicializar
+extern tss_inicializar_idle
+extern tss_inicializar_zombie
+extern sched_inicializar
 extern resetear_pic
 extern habilitar_pic
+extern deshabilitar_pic
+
 
 %macro pintar_pantalla 0
 	imprimir_texto_mp pintar_pantalla_msg, 4000, 0x22, 0, 0
@@ -24,8 +31,8 @@ extern habilitar_pic
 	mov ecx, ecx
 
 	pintarBarras:
-		imprimir_texto_mp pintar_pantalla_msg, 1, 11001100b, ecx, 0
-		imprimir_texto_mp pintar_pantalla_msg, 1, 10011001b, ecx, 79 
+		imprimir_texto_mp pintar_pantalla_msg, 1, 01000100b, ecx, 0
+		imprimir_texto_mp pintar_pantalla_msg, 1, 00010001b, ecx, 79 
 	loop pintarBarras
 
 	imprimir_texto_mp pintar_pantalla_msg, 80, 0x00, 0, 0
@@ -45,11 +52,11 @@ extern habilitar_pic
 		imprimir_texto_mp pintar_pantalla_msg, 5, 00010001b, eax, 39
 	loop pintarCuadrados
 
-	imprimir_texto_mp pintar_pantalla_group_name, pintar_pantalla_group_name_len, 0xBF, 0, 65 
-	mov eax, 9733
-	push eax
-	imprimir_texto_mp esp, 1, 0xBF, 0, 76 
-	pop eax
+	imprimir_texto_mp pintar_pantalla_group_name, pintar_pantalla_group_name_len, 00000111b, 0, 63 
+	; mov eax, 9733
+	; push eax
+	; imprimir_texto_mp esp, 1, 0xBF, 0, 76 
+	; pop eax
 
 %endmacro
 
@@ -61,6 +68,7 @@ jmp start
 %define BASE_PAGE_DIRECTORY       0x27000
 %define SELECTOR_CODIGO_LVL0      0x40
 %define SELECTOR_DATOS_LVL0       0x50
+%define SELECTOR_TSS_INICIAL      0x68
 %define SELECTOR_VIDEO            0x60
 
 ;;
@@ -77,7 +85,7 @@ pintar_pantalla_msg         db ''
 pintar_pantalla_nros        db '1 2 3 4 5 6 7 8'
 pintar_pantalla_nros_len equ $ - pintar_pantalla_nros
 
-pintar_pantalla_group_name  db 'Estrellitas'
+pintar_pantalla_group_name  db 'Grupo Estrellitas'
 pintar_pantalla_group_name_len equ $ - pintar_pantalla_group_name
 
 barra_len equ $ - 1
@@ -122,7 +130,6 @@ modoprotegido:
 ;xchg bx,bx ;breakpoint
 
 	; Establecer selectores de segmentos
-	; xor eax, eax
 	mov ax, SELECTOR_DATOS_LVL0 ; 10<<3 1010000b 0x50
 	mov ds, ax
 	mov es, ax
@@ -158,10 +165,13 @@ modoprotegido:
 	mov cr0, eax
 	
 	; Inicializar tss
+	call tss_inicializar
 
 	; Inicializar tss de la tarea Idle
+	call tss_inicializar_idle
 
 	; Inicializar el scheduler
+	call sched_inicializar
 
 	; Inicializar la IDT
 	call idt_inicializar
@@ -169,19 +179,45 @@ modoprotegido:
 	; Cargar IDT
 	lidt[IDT_DESC]
 
-; xchg bx,bx
- 
 	; Configurar controlador de interrupciones
+	call deshabilitar_pic
 	call resetear_pic
 	call habilitar_pic
-	
 
 	; Cargar tarea inicial
- 
+	mov ax, SELECTOR_TSS_INICIAL
+	ltr ax
+
 	; Habilitar interrupciones
 	sti
 
 	; Saltar a la primera tarea: Idle
+	
+
+
+	; Usé esto para testear el mapeo de los zombies
+	; mov eax, 1
+	; mov ebx, 1
+	; mov ecx, 0
+	; mov edx, 0x10000
+
+	; push eax
+	; push ebx
+	; push ecx
+	; push edx
+
+	; call tss_inicializar_zombie
+
+	; ;mov ax, 0xB8 ; selector del tss de la primera tarea del jugador B (índice 23 de la gdt)
+	; mov ax, 0x78 ; selector del tss de la primera tarea del jugador B (índice 15 de la gdt)
+	; ltr ax
+	; mov eax, 0x00100000
+	; mov cr3, eax
+	; xchg bx,bx
+	; mov cr3, eax
+
+
+
 
 	; Ciclar infinitamente (por si algo sale mal...)
 	mov eax, 0xFFFF

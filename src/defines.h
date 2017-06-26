@@ -22,11 +22,20 @@
 
 #define SIZE_W                  78
 #define SIZE_H                  44
+#define TAM_PAGINA              0x1000
+#define JUGADOR_A               0
+#define JUGADOR_B               1
+
+#define SELECTOR_CODIGO_LVL0      0x40
+#define SELECTOR_DATOS_LVL0       0x50
+#define SELECTOR_CODIGO_LVL3      0x4B
+#define SELECTOR_DATOS_LVL3       0x5B
+#define SELECTOR_VIDEO            0x60
 
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
-#define GDT_COUNT 30
+#define GDT_COUNT 31
 
 #define GDT_IDX_NULL_DESC           0
 #define GDT_IDX_CODIGO_LVL_0_DESC   8
@@ -34,6 +43,27 @@
 #define GDT_IDX_DATO_LVL_0_DESC     10
 #define GDT_IDX_DATO_LVL_3_DESC     11
 #define GDT_IDX_DATO_VID_LVL_0_DESC 12
+
+#define GDT_TSS_TAREA_INICIAL_DESC  13
+#define GDT_TSS_TAREA_IDLE_DESC     14
+
+#define GDT_TSS_TAREA_A_0_DESC      15
+#define GDT_TSS_TAREA_A_1_DESC      16
+#define GDT_TSS_TAREA_A_2_DESC      17
+#define GDT_TSS_TAREA_A_3_DESC      18
+#define GDT_TSS_TAREA_A_4_DESC      19
+#define GDT_TSS_TAREA_A_5_DESC      20
+#define GDT_TSS_TAREA_A_6_DESC      21
+#define GDT_TSS_TAREA_A_7_DESC      22
+
+#define GDT_TSS_TAREA_B_0_DESC      23
+#define GDT_TSS_TAREA_B_1_DESC      24
+#define GDT_TSS_TAREA_B_2_DESC      25
+#define GDT_TSS_TAREA_B_3_DESC      26
+#define GDT_TSS_TAREA_B_4_DESC      27
+#define GDT_TSS_TAREA_B_5_DESC      28
+#define GDT_TSS_TAREA_B_6_DESC      29
+#define GDT_TSS_TAREA_B_7_DESC      30
 
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */
@@ -43,10 +73,10 @@
 /* -------------------------------------------------------------------------- */
 #define VIDEO                   0x000B8000 /* direccion fisica del buffer de video */
 #define DIR_VIRTUAL_MAPA        0x08000000
+#define PILA_KERNEL             0x27000
 #define PAGE_DIRECTORY_KERNEL   0x27000
 #define PAGE_TABLE_KERNEL       0x28000
 #define INICIO_MAPA             0x400000
-#define FIN_MAPA                0xDC3FFF
 
 #define DIR_CODIGO_TAREA_A_G    0x10000
 #define DIR_CODIGO_TAREA_A_M    0x11000

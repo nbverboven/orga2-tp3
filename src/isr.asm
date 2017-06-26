@@ -5,6 +5,7 @@
 ; definicion de rutinas de atencion de interrupciones
 
 %include "imprimir.mac"
+%include "idle.asm"
 
 BITS 32
 
@@ -74,31 +75,21 @@ extern fin_intr_pic1
 
 ;; Sched
 extern sched_proximo_indice
+extern sched_handler_teclado
 
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
-
-; %macro ISR 0
-; global _isr%0
-
-; _isr%0:
-;     imprimir_texto_mp  int_0_msg, int_0_len, 0x07, 0, 0
-;     jmp $
-
-; %endmacro
-
 %macro ISR 1
 global _isr%1
 
 _isr%1:
-    mov eax, %1
-    imprimir_texto_mp  msg_int_%1, len_int_%1, 0x07, 0, 0
+	mov eax, %1
+	imprimir_texto_mp  msg_int_%1, len_int_%1, 0x07, 0, 0
 
-    jmp $
+	jmp $
 
 %endmacro
-
 
 ;;
 ;; Datos
@@ -134,9 +125,9 @@ ISR 19
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
-
 global _isr32
 _isr32:
+
 pushad
 call fin_intr_pic1
 
@@ -151,48 +142,58 @@ iret
 ;; -------------------------------------------------------------------------- ;;
 global _isr33
 _isr33:
-pushad
-call fin_intr_pic1
+	pushad
+	pushfd
 
-xor eax, eax
-in al, 0x60
-mov ebx, [teclaPresionada]
-add ebx, 0x80
-cmp eax, ebx 
-je .fin
-        mov [teclaPresionada], al
-        imprimir_texto_mp eax, 1, 0x0f, 0, 79
-.fin:
+	call fin_intr_pic1
 
-popad
-iret
+	xor eax, eax
+	in al, 0x60
+	push eax
 
+	call sched_handler_teclado
 
+	pop eax
+	popfd
+	popad
+	iret
 
 ;;
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
-
 %define IZQ 0xAAA
 %define DER 0x441
 %define ADE 0x83D
 %define ATR 0x732
 
+global _isr66
+_isr66:
+	pushad
+	pushfd
+
+	call fin_intr_pic1
+
+	mov eax, 0x42
+
+	popfd
+	popad
+	iret
+
 
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;
 proximo_reloj:
-        pushad
-        inc DWORD [isrnumero]
-        mov ebx, [isrnumero]
-        cmp ebx, 0x4
-        jl .ok
-                mov DWORD [isrnumero], 0x0
+	pushad
+	inc DWORD [isrnumero]
+	mov ebx, [isrnumero]
+	cmp ebx, 0x4
+	jl .ok
+                ov DWORD [isrnumero], 0x0
                 mov ebx, 0
-        .ok:
+	.ok:
                 add ebx, isrClock
                 imprimir_texto_mp ebx, 1, 0x0f, 49, 79
                 popad
-        ret
-        
-        
+	ret
+		
+		
