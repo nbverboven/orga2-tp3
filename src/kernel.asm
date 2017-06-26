@@ -185,8 +185,8 @@ modoprotegido:
 	call habilitar_pic
 
 	; Cargar tarea inicial
-	mov ax, SELECTOR_TSS_INICIAL
-	ltr ax
+	; mov ax, SELECTOR_TSS_INICIAL
+	; ltr ax
 
 	; Habilitar interrupciones
 	sti

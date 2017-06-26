@@ -75,39 +75,21 @@ extern fin_intr_pic1
 
 ;; Sched
 extern sched_proximo_indice
+extern sched_handler_teclado
 
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
-
-; %macro ISR 0
-; global _isr%0
-
-; _isr%0:
-;     imprimir_texto_mp  int_0_msg, int_0_len, 0x07, 0, 0
-;     jmp $
-
-; %endmacro
-
 %macro ISR 1
 global _isr%1
 
 _isr%1:
-    mov eax, %1
-    imprimir_texto_mp  msg_int_%1, len_int_%1, 0x07, 0, 0
+	mov eax, %1
+	imprimir_texto_mp  msg_int_%1, len_int_%1, 0x07, 0, 0
 
-    jmp $
+	jmp $
 
 %endmacro
-
-; %macro ISR 13
-; global _isr%13
-
-; _isr%13:
-;     imprimir_texto_mp  int_13_msg, int_13_len, 0x07, 0, 0
-;     jmp $
-
-; %endmacro
 
 ;;
 ;; Datos
@@ -145,15 +127,15 @@ ISR 19
 
 global _isr32
 _isr32:
-    pushad
-    pushfd
+	pushad
+	pushfd
 
-    call fin_intr_pic1
-    call proximo_reloj
+	call fin_intr_pic1
+	call proximo_reloj
 
-    popfd
-    popad
-    iret
+	popfd
+	popad
+	iret
 
 
 ;;
@@ -161,6 +143,20 @@ _isr32:
 ;; -------------------------------------------------------------------------- ;;
 global _isr33
 _isr33:
+pushad
+pushfd
+
+call fin_intr_pic1
+
+xor eax, eax
+in al, 0x60
+push eax
+
+call sched_handler_teclado
+
+pop eax
+popfd
+popad
 iret
 
 
@@ -178,17 +174,17 @@ iret
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;
 proximo_reloj:
-        pushad
-        inc DWORD [isrnumero]
-        mov ebx, [isrnumero]
-        cmp ebx, 0x4
-        jl .ok
-                mov DWORD [isrnumero], 0x0
-                mov ebx, 0
-        .ok:
-                add ebx, isrClock
-                imprimir_texto_mp ebx, 1, 0x0f, 49, 79
-                popad
-        ret
-        
-        
+		pushad
+		inc DWORD [isrnumero]
+		mov ebx, [isrnumero]
+		cmp ebx, 0x4
+		jl .ok
+				mov DWORD [isrnumero], 0x0
+				mov ebx, 0
+		.ok:
+				add ebx, isrClock
+				imprimir_texto_mp ebx, 1, 0x0f, 49, 79
+				popad
+		ret
+		
+		
