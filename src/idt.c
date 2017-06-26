@@ -43,33 +43,38 @@ idt_descriptor IDT_DESC = {
     idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
 */
 
-#define IDT_ENTRY(numero)                                                                             \
+#define INTERRUPT_GATE_KERNEL    0x8E00
+#define INTERRUPT_GATE_USUARIO   0xEE00
+
+#define IDT_ENTRY(numero, tipo_puerta)                                                                           \
     idt[numero].offset_0_15 = (unsigned short) ((unsigned int)(&_isr ## numero) & (unsigned int) 0xFFFF);        \
-    idt[numero].segsel = (unsigned short) 0x0040;                                                            \
-    idt[numero].attr = (unsigned short) 0x8E00;                                                              \
+    idt[numero].segsel = (unsigned short) 0x0040;                                                                \
+    idt[numero].attr = (unsigned short) tipo_puerta;                                                             \
     idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
 
 
-void idt_inicializar() {
-    IDT_ENTRY(0);
-    IDT_ENTRY(1);
-    IDT_ENTRY(2);
-    IDT_ENTRY(3);
-    IDT_ENTRY(4);
-    IDT_ENTRY(5);
-    IDT_ENTRY(6);
-    IDT_ENTRY(7);
-    IDT_ENTRY(8);
-    IDT_ENTRY(9);
-    IDT_ENTRY(10);
-    IDT_ENTRY(11);
-    IDT_ENTRY(12);
-    IDT_ENTRY(13);
-    IDT_ENTRY(14);
-    IDT_ENTRY(16);
-    IDT_ENTRY(17);
-    IDT_ENTRY(18);
-    IDT_ENTRY(19);
-    IDT_ENTRY(32); // interrupción del reloj
-    IDT_ENTRY(33); // Interrupción del teclado
+void idt_inicializar()
+{
+    IDT_ENTRY( 0,  INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 1,  INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 2,  INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 3,  INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 4,  INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 5,  INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 6,  INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 7,  INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 8,  INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 9,  INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 10, INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 11, INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 12, INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 13, INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 14, INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 16, INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 17, INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 18, INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 19, INTERRUPT_GATE_KERNEL  );
+    IDT_ENTRY( 32, INTERRUPT_GATE_KERNEL  ); // Interrupción del reloj
+    IDT_ENTRY( 33, INTERRUPT_GATE_KERNEL  ); // Interrupción del teclado
+    IDT_ENTRY( 66, INTERRUPT_GATE_USUARIO ); // Syscall mover
 }

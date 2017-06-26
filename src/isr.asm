@@ -124,7 +124,6 @@ ISR 19
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
-
 global _isr32
 _isr32:
 	pushad
@@ -137,54 +136,63 @@ _isr32:
 	popad
 	iret
 
-
 ;;
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
 global _isr33
 _isr33:
-pushad
-pushfd
+	pushad
+	pushfd
 
-call fin_intr_pic1
+	call fin_intr_pic1
 
-xor eax, eax
-in al, 0x60
-push eax
+	xor eax, eax
+	in al, 0x60
+	push eax
 
-call sched_handler_teclado
+	call sched_handler_teclado
 
-pop eax
-popfd
-popad
-iret
-
-
+	pop eax
+	popfd
+	popad
+	iret
 
 ;;
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
-
 %define IZQ 0xAAA
 %define DER 0x441
 %define ADE 0x83D
 %define ATR 0x732
 
+global _isr66
+_isr66:
+	pushad
+	pushfd
+
+	call fin_intr_pic1
+
+	mov eax, 0x42
+
+	popfd
+	popad
+	iret
+
 
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;
 proximo_reloj:
-		pushad
-		inc DWORD [isrnumero]
-		mov ebx, [isrnumero]
-		cmp ebx, 0x4
-		jl .ok
-				mov DWORD [isrnumero], 0x0
-				mov ebx, 0
-		.ok:
-				add ebx, isrClock
-				imprimir_texto_mp ebx, 1, 0x0f, 49, 79
-				popad
-		ret
+	pushad
+	inc DWORD [isrnumero]
+	mov ebx, [isrnumero]
+	cmp ebx, 0x4
+	jl .ok
+			mov DWORD [isrnumero], 0x0
+			mov ebx, 0
+	.ok:
+			add ebx, isrClock
+			imprimir_texto_mp ebx, 1, 0x0f, 49, 79
+			popad
+	ret
 		
 		
