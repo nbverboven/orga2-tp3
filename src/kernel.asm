@@ -17,6 +17,7 @@ extern mmu_inicializar_dir_kernel
 extern mmu_inicializar_dir_zombi
 extern tss_inicializar
 extern tss_inicializar_idle
+extern tss_inicializar_zombie
 extern resetear_pic
 extern habilitar_pic
 extern deshabilitar_pic
@@ -128,7 +129,6 @@ modoprotegido:
 ;xchg bx,bx ;breakpoint
 
 	; Establecer selectores de segmentos
-	; xor eax, eax
 	mov ax, SELECTOR_DATOS_LVL0 ; 10<<3 1010000b 0x50
 	mov ds, ax
 	mov es, ax
@@ -185,9 +185,8 @@ modoprotegido:
 	call habilitar_pic
 
 	; Cargar tarea inicial
-	mov ax, SELECTOR_TSS_INICIAL
-	ltr ax
-	xchg bx,bx
+	; mov ax, SELECTOR_TSS_INICIAL
+	; ltr ax
 
 	; Habilitar interrupciones
 	sti
@@ -199,7 +198,7 @@ modoprotegido:
 	; Usé esto para testear el mapeo de los zombies
 	; mov eax, 1
 	; mov ebx, 1
-	; mov ecx, 1
+	; mov ecx, 0
 	; mov edx, 0x10000
 
 	; push eax
@@ -207,14 +206,17 @@ modoprotegido:
 	; push ecx
 	; push edx
 
-	; call mmu_inicializar_dir_zombi
+	; call tss_inicializar_zombie
 
+	; ;mov ax, 0xB8 ; selector del tss de la primera tarea del jugador B (índice 23 de la gdt)
+	; mov ax, 0x78 ; selector del tss de la primera tarea del jugador B (índice 15 de la gdt)
+	; ltr ax
+	; mov eax, 0x00100000
 	; mov cr3, eax
- 
-	; pop edx
-	; pop ecx
-	; pop ebx
-	; pop edi
+	; xchg bx,bx
+	; mov cr3, eax
+
+
 
 
 	; Ciclar infinitamente (por si algo sale mal...)
