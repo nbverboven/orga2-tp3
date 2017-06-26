@@ -177,16 +177,14 @@ modoprotegido:
 	; Cargar IDT
 	lidt[IDT_DESC]
 
-; xchg bx,bx
-
 	; Configurar controlador de interrupciones
 	call deshabilitar_pic
 	call resetear_pic
 	call habilitar_pic
 
 	; Cargar tarea inicial
-	; mov ax, SELECTOR_TSS_INICIAL
-	; ltr ax
+	mov ax, SELECTOR_TSS_INICIAL
+	ltr ax
 
 	; Habilitar interrupciones
 	sti
