@@ -8,6 +8,31 @@
 #include "sched.h"
 #include "screen.h"
 
+jugador jugadorA;
+jugador jugadorB;
+info_juego infoJuego;
+
+void sched_inicializar()
+{
+	jugadorA.id = 0;
+	jugadorA.zombies_lanzados = 0;
+	jugadorA.zombies_restantes = 8;
+	jugadorA.posicion_x = 0;
+	jugadorA.posicion_y = 22;
+	jugadorA.proximo_zombie_a_lanzar = Guerrero;
+
+	jugadorB.id = 1;
+	jugadorB.zombies_lanzados = 0;
+	jugadorB.zombies_restantes = 8;
+	jugadorB.posicion_x = 79;
+	jugadorB.posicion_y = 22;
+	jugadorB.proximo_zombie_a_lanzar = Guerrero;
+
+	infoJuego.jugador_A = jugadorA;
+	infoJuego.jugador_B = jugadorB;
+	infoJuego.modo_debug_on = 0;
+}
+
 unsigned short sched_proximo_indice()
 {
 	return 0;
@@ -162,15 +187,15 @@ void sched_handler_teclado(unsigned int tecla)
 
 		/*************** Tecla modo debug *****************/
 
-		// H
-		case 0x23:
-			asd = (const char*) "H";
+		// Y
+		case 0x15:
+			asd = (const char*) "Y";
 			attr = ( C_FG_LIGHT_BROWN | C_BG_BLACK );
 			print( asd, 25, 0, attr );
 			break;
 
-		case 0xA3:
-			asd = (const char*) "H";
+		case 0x95:
+			asd = (const char*) "Y";
 			attr = ( C_FG_BLACK | C_BG_BLACK );
 			print( asd, 25, 0, attr );
 			break;

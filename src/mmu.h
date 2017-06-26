@@ -33,7 +33,7 @@ typedef struct str_pd_entry {
 	unsigned char page_size:1;                  // 0 = 4Kb, 1 = 4Mb
 	unsigned char ignored_2:4;
 	unsigned int page_table_address:20;         // Dirección física de la tabla de página
-} __attribute__((__packed__)) pd_entry;
+} __attribute__((__packed__, aligned (8))) pd_entry;
 
 
 typedef struct str_pt_entry {
@@ -48,11 +48,11 @@ typedef struct str_pt_entry {
 	unsigned char global:1;                     // (?)
 	unsigned char ignored:3;
 	unsigned int page_frame_address:20;         // Dirección física del frame de una página de 4Kb
-} __attribute__((__packed__)) pt_entry;
+} __attribute__((__packed__, aligned (8))) pt_entry;
 
 
 // Una estructura auxiliar que ocupa 4096 bytes (4 Kb)
-typedef struct str_zombie {
+typedef struct str_map_tile {
 	double a1; double a2; double a3; double a4; double a5; double a6; double a7; double a8; double a9; double a10; double a11; double a12; double a13; double a14; double a15; double a16;
 	double b1; double b2; double b3; double b4; double b5; double b6; double b7; double b8; double b9; double b10; double b11; double b12; double b13; double b14; double b15; double b16;
 	double c1; double c2; double c3; double c4; double c5; double c6; double c7; double c8; double c9; double c10; double c11; double c12; double c13; double c14; double c15; double c16;
@@ -88,7 +88,7 @@ typedef struct str_zombie {
 	double f49; double f50; double f51; double f52; double f53; double f54; double f55; double f56; double f57; double f58; double f59; double f60; double f61; double f62; double f63; double f64;
 	double g49; double g50; double g51; double g52; double g53; double g54; double g55; double g56; double g57; double g58; double g59; double g60; double g61; double g62; double g63; double g64;
 	double h49; double h50; double h51; double h52; double h53; double h54; double h55; double h56; double h57; double h58; double h59; double h60; double h61; double h62; double h63; double h64;
-} __attribute__((__packed__)) zombie;
+} __attribute__((__packed__)) map_tile;
 
 
 // typedef struct str_dir_virtual {

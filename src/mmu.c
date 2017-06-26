@@ -73,7 +73,7 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int jugador,
 
 
 	// Mapeo las páginas de la tarea
-	zombie (*mapa)[SIZE_W] = (zombie (*)[SIZE_W]) INICIO_MAPA;
+	map_tile (*mapa)[SIZE_W] = (map_tile (*)[SIZE_W]) INICIO_MAPA;
 	
 	unsigned int posicion_en_mapa = (unsigned int) &( mapa [posicion_en_y]                  [posicion_en_x]             );
 	unsigned int adelante =         (unsigned int) &( mapa [posicion_en_y]                  [posicion_en_x+1-2*jugador] );

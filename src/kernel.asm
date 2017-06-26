@@ -18,6 +18,7 @@ extern mmu_inicializar_dir_zombi
 extern tss_inicializar
 extern tss_inicializar_idle
 extern tss_inicializar_zombie
+extern sched_inicializar
 extern resetear_pic
 extern habilitar_pic
 extern deshabilitar_pic
@@ -170,6 +171,7 @@ modoprotegido:
 	call tss_inicializar_idle
 
 	; Inicializar el scheduler
+	call sched_inicializar
 
 	; Inicializar la IDT
 	call idt_inicializar
