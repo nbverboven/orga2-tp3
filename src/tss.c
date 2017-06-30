@@ -71,7 +71,7 @@ void tss_inicializar_zombie(unsigned int codigo_zombie, unsigned int jugador,
 		if ( !jug )
 		{
 			// Actualizo el comienzo del TSS de la tarea idle en su descriptor de la GDT
-			gdt[proxima_tss_libre_A].base_0_15 =    (unsigned int) (&tss_zombisA[proxima_tarea_a_lanzar_A]) & 0x0000FFFF;
+			gdt[proxima_tss_libre_A].base_0_15  =   (unsigned int) (&tss_zombisA[proxima_tarea_a_lanzar_A]) & 0x0000FFFF;
 			gdt[proxima_tss_libre_A].base_23_16 = ( (unsigned int) (&tss_zombisA[proxima_tarea_a_lanzar_A]) & 0x00FF0000 ) >> 16;
 			gdt[proxima_tss_libre_A].base_31_24 = ( (unsigned int) (&tss_zombisA[proxima_tarea_a_lanzar_A]) & 0xFF000000 ) >> 24;
 

@@ -19,18 +19,27 @@ void sched_inicializar()
 	jugadorA.zombies_restantes = 8;
 	jugadorA.posicion_x = 0;
 	jugadorA.posicion_y = 22;
-	jugadorA.proximo_zombie_a_lanzar = Guerrero;
+	jugadorA.proximo_zombie_a_lanzar = 0;
 
 	jugadorB.id = 1;
 	jugadorB.zombies_lanzados = 0;
 	jugadorB.zombies_restantes = 8;
 	jugadorB.posicion_x = 79;
 	jugadorB.posicion_y = 22;
-	jugadorB.proximo_zombie_a_lanzar = Guerrero;
+	jugadorB.proximo_zombie_a_lanzar = 0;
 
 	infoJuego.jugador_A = jugadorA;
 	infoJuego.jugador_B = jugadorB;
 	infoJuego.modo_debug_on = 0;
+	infoJuego.zombies_disponibles[0] = "G"; // Guerrero
+	infoJuego.zombies_disponibles[1] = "M"; // Mago
+	infoJuego.zombies_disponibles[2] = "C"; // Clerigo
+
+	const char* i = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
+	const char* j = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
+
+	print( i, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_WHITE | C_BG_RED  );
+	print( j, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_WHITE | C_BG_BLUE  );
 }
 
 unsigned short sched_proximo_indice()
@@ -41,7 +50,9 @@ unsigned short sched_proximo_indice()
 void sched_handler_teclado(unsigned int tecla)
 {
 	const char* asd;
+	const char* pos;
 	unsigned short attr;
+	// unsigned short i;
 
 	switch ( tecla )
 	{
@@ -49,54 +60,44 @@ void sched_handler_teclado(unsigned int tecla)
 
 		// W
 		case 0x11:
-			asd = (const char*) "W";
-			attr = ( C_FG_LIGHT_CYAN | C_BG_BLACK );
-			print( asd, 0, 0, attr );
-			break;
+			pos = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
+			print( pos, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_RED | C_BG_RED  );
 
-		case 0x91:
-			asd = (const char*) "W";
-			attr = ( C_FG_BLACK | C_BG_BLACK );
-			print( asd, 0, 0, attr );
-			break;
+			jugadorA.posicion_y = (jugadorA.posicion_y == 1) ? 44 : (jugadorA.posicion_y - 1);
+			print( pos, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_WHITE | C_BG_RED  );
 
-		// A
-		case 0x1E:
-			asd = (const char*) "A";
-			attr = ( C_FG_LIGHT_CYAN | C_BG_BLACK );
-			print( asd, 0, 0, attr );
-			break;
-
-		case 0x9E:
-			asd = (const char*) "A";
-			attr = ( C_FG_BLACK | C_BG_BLACK );
-			print( asd, 0, 0, attr );
 			break;
 
 		// S
 		case 0x1F:
-			asd = (const char*) "Puto el que lee";
-			attr = ( C_FG_LIGHT_CYAN | C_BG_BLACK );
-			print( asd, 0, 0, attr );
+			pos = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
+			print( pos, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_RED | C_BG_RED  );
+
+			jugadorA.posicion_y = (jugadorA.posicion_y == 44) ? 1 : (jugadorA.posicion_y + 1);
+			print( pos, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_WHITE | C_BG_RED  );
+
 			break;
 
-		case 0x9F:
-			asd = (const char*) "Puto el que lee";
-			attr = ( C_FG_BLACK | C_BG_BLACK );
-			print( asd, 0, 0, attr );
+		// A
+		case 0x1E:
+			asd = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
+			print( asd, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_RED | C_BG_RED  );
+
+			jugadorA.proximo_zombie_a_lanzar = (jugadorA.proximo_zombie_a_lanzar + 2) % 3;
+			asd = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
+			print( asd, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_WHITE | C_BG_RED  );
+
 			break;
 
 		// D
 		case 0x20:
-			asd = (const char*) "D";
-			attr = ( C_FG_LIGHT_CYAN | C_BG_BLACK );
-			print( asd, 0, 0, attr );
-			break;
+			asd = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
+			print( asd, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_RED | C_BG_RED  );
 
-		case 0xA0:
-			asd = (const char*) "D";
-			attr = ( C_FG_BLACK | C_BG_BLACK );
-			print( asd, 0, 0, attr );
+			jugadorA.proximo_zombie_a_lanzar = (jugadorA.proximo_zombie_a_lanzar + 1) % 3;
+			asd = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
+			print( asd, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_WHITE | C_BG_RED  );
+
 			break;
 
 		// LShift
@@ -119,54 +120,44 @@ void sched_handler_teclado(unsigned int tecla)
 
 		// I
 		case 0x17:
-			asd = (const char*) "I";
-			attr = ( C_FG_LIGHT_MAGENTA | C_BG_BLACK );
-			print( asd, 18, 0, attr );
-			break;
+			pos = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
+			print( pos, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_BLUE | C_BG_BLUE  );
 
-		case 0x97:
-			asd = (const char*) "I";
-			attr = ( C_FG_BLACK | C_BG_BLACK );
-			print( asd, 18, 0, attr );
+			jugadorB.posicion_y = (jugadorB.posicion_y == 1) ? 44 : (jugadorB.posicion_y - 1);
+			print( pos, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_WHITE | C_BG_BLUE  );
+
 			break;
 
 		// K
 		case 0x25:
-			asd = (const char*) "K";
-			attr = ( C_FG_LIGHT_MAGENTA | C_BG_BLACK );
-			print( asd, 18, 0, attr );
-			break;
+			pos = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
+			print( pos, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_BLUE | C_BG_BLUE  );
 
-		case 0xA5:
-			asd = (const char*) "K";
-			attr = ( C_FG_BLACK | C_BG_BLACK );
-			print( asd, 18, 0, attr );
-			break;
+			jugadorB.posicion_y = (jugadorB.posicion_y == 44) ? 1 : (jugadorB.posicion_y + 1);
+			print( pos, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_WHITE | C_BG_BLUE  );
 
-		// L
-		case 0x26:
-			asd = (const char*) "Gil";
-			attr = ( C_FG_LIGHT_MAGENTA | C_BG_BLACK );
-			print( asd, 18, 0, attr );
-			break;
-
-		case 0xA6:
-			asd = (const char*) "Gil";
-			attr = ( C_FG_BLACK | C_BG_BLACK );
-			print( asd, 18, 0, attr );
 			break;
 
 		// J
 		case 0x24:
-			asd = (const char*) "J";
-			attr = ( C_FG_LIGHT_MAGENTA | C_BG_BLACK );
-			print( asd, 18, 0, attr );
+			asd = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
+			print( asd, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_BLUE | C_BG_BLUE  );
+
+			jugadorB.proximo_zombie_a_lanzar = (jugadorB.proximo_zombie_a_lanzar + 2) % 3;
+			asd = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
+			print( asd, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_WHITE | C_BG_BLUE  );
+
 			break;
 
-		case 0xA4:
-			asd = (const char*) "J";
-			attr = ( C_FG_BLACK | C_BG_BLACK );
-			print( asd, 18, 0, attr );
+		// L
+		case 0x26:
+			asd = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
+			print( asd, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_BLUE | C_BG_BLUE  );
+
+			jugadorB.proximo_zombie_a_lanzar = (jugadorB.proximo_zombie_a_lanzar + 1) % 3;
+			asd = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
+			print( asd, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_WHITE | C_BG_BLUE  );
+
 			break;
 
 		// RShift

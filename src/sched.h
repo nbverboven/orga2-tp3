@@ -15,7 +15,7 @@ void sched_inicializar();
 unsigned short sched_proximo_indice();
 void sched_handler_teclado(unsigned int tecla);
 
-typedef enum clases_zombie_e { Guerrero = 0, Mago = 1, Clerigo = 2 } clases_zombie;
+// typedef enum clases_zombie_e { Guerrero = 0, Mago = 1, Clerigo = 2 } clases_zombie;
 
 typedef struct str_jugador {
 	unsigned char  id;
@@ -23,16 +23,17 @@ typedef struct str_jugador {
 	unsigned short zombies_restantes;
 	unsigned short posicion_x;
 	unsigned short posicion_y;
-	clases_zombie proximo_zombie_a_lanzar;
-} __attribute__((__packed__)) jugador;
+	unsigned short proximo_zombie_a_lanzar;
+} __attribute__((__packed__, aligned (8))) jugador;
 
 
 typedef struct str_info_juego {
 	jugador jugador_A;
 	jugador jugador_B;
 	unsigned char modo_debug_on;
+	const char* zombies_disponibles[3];
 	
-} __attribute__((__packed__)) info_juego;
+} __attribute__((__packed__, aligned (8))) info_juego;
 
 
 #endif	/* !__SCHED_H__ */
