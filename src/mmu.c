@@ -72,15 +72,15 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int jugador,
 	// Mapeo las páginas de la tarea
 	map_tile (*mapa)[SIZE_W] = (map_tile (*)[SIZE_W]) INICIO_MAPA;
 	
-	unsigned int posicion_en_mapa = (unsigned int) &( mapa [posicion_en_y]                  [posicion_en_x]             );
-	unsigned int adelante =         (unsigned int) &( mapa [posicion_en_y]                  [posicion_en_x+1-2*jugador] );
-	unsigned int adelante_der =     (unsigned int) &( mapa [(posicion_en_y+1-2*jugador)%44] [posicion_en_x+1-2*jugador] );
-	unsigned int adelante_izq =     (unsigned int) &( mapa [(posicion_en_y-1+2*jugador)%44] [posicion_en_x+1-2*jugador] );
-	unsigned int der =              (unsigned int) &( mapa [(posicion_en_y+1-2*jugador)%44] [posicion_en_x]             );
-	unsigned int izq =              (unsigned int) &( mapa [(posicion_en_y-1+2*jugador)%44] [posicion_en_x]             );
-	unsigned int atras =            (unsigned int) &( mapa [posicion_en_y]                  [posicion_en_x-1+2*jugador] );
-	unsigned int atras_izq =        (unsigned int) &( mapa [(posicion_en_y-1+2*jugador)%44] [posicion_en_x-1+2*jugador] );
-	unsigned int atras_der =        (unsigned int) &( mapa [(posicion_en_y+1-2*jugador)%44] [posicion_en_x-1+2*jugador] );
+	unsigned int posicion_en_mapa = (unsigned int) &( mapa [posicion_en_y]                   [posicion_en_x]             );
+	unsigned int adelante =         (unsigned int) &( mapa [posicion_en_y]                   [posicion_en_x+1-2*jugador] );
+	unsigned int adelante_der =     (unsigned int) &( mapa [(posicion_en_y+1+42*jugador)%44] [posicion_en_x+1-2*jugador] );
+	unsigned int adelante_izq =     (unsigned int) &( mapa [(posicion_en_y+43+2*jugador)%44] [posicion_en_x+1-2*jugador] );
+	unsigned int der =              (unsigned int) &( mapa [(posicion_en_y+1+42*jugador)%44] [posicion_en_x]             );
+	unsigned int izq =              (unsigned int) &( mapa [(posicion_en_y+43+2*jugador)%44] [posicion_en_x]             );
+	unsigned int atras =            (unsigned int) &( mapa [posicion_en_y]                   [posicion_en_x-1+2*jugador] );
+	unsigned int atras_izq =        (unsigned int) &( mapa [(posicion_en_y+43+2*jugador)%44] [posicion_en_x-1+2*jugador] );
+	unsigned int atras_der =        (unsigned int) &( mapa [(posicion_en_y+1+42*jugador)%44] [posicion_en_x-1+2*jugador] );
 
 	mmu_mapear_pagina( DIR_VIRTUAL_MAPA,        (unsigned int) page_directory, posicion_en_mapa, 1, 1 );
 	mmu_mapear_pagina( DIR_VIRTUAL_MAPA+0x1000, (unsigned int) page_directory, adelante,         1, 1 );
