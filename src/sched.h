@@ -12,7 +12,8 @@
 #include "tss.h"
 
 void sched_inicializar();
-short sched_proximo_indice();
+unsigned short sched_proximo_indice();
+unsigned short sched_proximo_indice_gdt();
 void sched_handler_teclado(unsigned int tecla);
 
 // typedef enum clases_zombie_e { Guerrero = 0, Mago = 1, Clerigo = 2 } clases_zombie;
@@ -28,11 +29,24 @@ typedef struct str_jugador {
 } __attribute__((__packed__, aligned (8))) jugador;
 
 
+typedef struct str_task_info {
+	unsigned char  esta_activa;
+	unsigned short indice_gdt;
+	tss*           estado_tarea;
+
+} __attribute__((__packed__, aligned (8))) task_info;
+
+
 typedef struct str_info_juego {
-	jugador jugador_A;
-	jugador jugador_B;
 	unsigned char modo_debug_on;
-	const char* zombies_disponibles[3];
+	const char*   zombies_disponibles[3];
+	jugador       jugador_A;
+	jugador       jugador_B;
+	unsigned char jugador_de_turno;
+	unsigned char tarea_actual_A;
+	unsigned char tarea_actual_B;
+	task_info     tareasA[CANT_ZOMBIS];
+	task_info     tareasB[CANT_ZOMBIS];
 
 	
 } __attribute__((__packed__, aligned (8))) info_juego;
