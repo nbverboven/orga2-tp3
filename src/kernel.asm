@@ -70,6 +70,7 @@ jmp start
 %define SELECTOR_DATOS_LVL0       0x50
 %define SELECTOR_TSS_INICIAL      0x68
 %define SELECTOR_VIDEO            0x60
+%define SELECTOR_TSS_IDLE         0x70
 
 ;;
 ;; Seccion de datos.
@@ -192,7 +193,7 @@ modoprotegido:
 	sti
 
 	; Saltar a la primera tarea: Idle
-	
+	jmp SELECTOR_TSS_IDLE:0
 
 
 	; Usé esto para testear el mapeo de los zombies

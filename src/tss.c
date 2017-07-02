@@ -22,6 +22,9 @@ unsigned int proxima_tarea_a_lanzar_A;
 unsigned int proxima_tarea_a_lanzar_B;
 
 
+
+
+
 void tss_inicializar()
 {
 	proxima_tss_libre_A = GDT_TSS_TAREA_A_0_DESC;
@@ -56,6 +59,11 @@ void tss_inicializar_idle()
 	tss_idle.gs     = SELECTOR_DATOS_LVL0;
 	tss_idle.fs     = SELECTOR_VIDEO;
 	tss_idle.ss     = SELECTOR_DATOS_LVL0;
+
+	tss_idle.eax    = 0;
+	tss_idle.ebx    = 0;
+	tss_idle.ecx    = 0;
+	tss_idle.edx    = 0;
 }
 
 
@@ -89,6 +97,11 @@ void tss_inicializar_zombie(unsigned int codigo_zombie, unsigned int jugador,
 			tss_zombisA[proxima_tarea_a_lanzar_A].esp0   = mmu_proxima_pagina_fisica_libre() + 0x1000;
 			tss_zombisA[proxima_tarea_a_lanzar_A].ss0    = SELECTOR_DATOS_LVL0;
 
+			tss_zombisA[proxima_tarea_a_lanzar_A].eax    = 0;
+			tss_zombisA[proxima_tarea_a_lanzar_A].ebx    = 0;
+			tss_zombisA[proxima_tarea_a_lanzar_A].ecx    = 0;
+			tss_zombisA[proxima_tarea_a_lanzar_A].edx    = 0;
+
 			proxima_tarea_a_lanzar_A += 1;
 			proxima_tss_libre_A += 1; 
 		}
@@ -112,6 +125,11 @@ void tss_inicializar_zombie(unsigned int codigo_zombie, unsigned int jugador,
 			tss_zombisB[proxima_tarea_a_lanzar_B].ss     = SELECTOR_DATOS_LVL3;
 			tss_zombisB[proxima_tarea_a_lanzar_B].esp0   = mmu_proxima_pagina_fisica_libre() + 0x1000;
 			tss_zombisB[proxima_tarea_a_lanzar_B].ss0    = SELECTOR_DATOS_LVL0;
+
+			tss_zombisB[proxima_tarea_a_lanzar_B].eax    = 0;
+			tss_zombisB[proxima_tarea_a_lanzar_B].ebx    = 0;
+			tss_zombisB[proxima_tarea_a_lanzar_B].ecx    = 0;
+			tss_zombisB[proxima_tarea_a_lanzar_B].edx    = 0;
 
 			proxima_tarea_a_lanzar_B += 1;
 			proxima_tss_libre_B += 1; 		

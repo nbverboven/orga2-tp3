@@ -12,21 +12,24 @@ jugador jugadorA;
 jugador jugadorB;
 info_juego infoJuego;
 
+
 void sched_inicializar()
 {
 	jugadorA.id = 0;
 	jugadorA.zombies_lanzados = 0;
-	jugadorA.zombies_restantes = 8;
+	jugadorA.zombies_restantes = 13;
 	jugadorA.posicion_x = 0;
 	jugadorA.posicion_y = 22;
 	jugadorA.proximo_zombie_a_lanzar = 0;
+	jugadorA.puntaje_actual = 0;
 
 	jugadorB.id = 1;
 	jugadorB.zombies_lanzados = 0;
-	jugadorB.zombies_restantes = 8;
+	jugadorB.zombies_restantes = 13;
 	jugadorB.posicion_x = 79;
 	jugadorB.posicion_y = 22;
 	jugadorB.proximo_zombie_a_lanzar = 0;
+	jugadorB.puntaje_actual = 0;
 
 	infoJuego.jugador_A = jugadorA;
 	infoJuego.jugador_B = jugadorB;
@@ -42,10 +45,12 @@ void sched_inicializar()
 	print( j, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_WHITE | C_BG_BLUE  );
 }
 
-unsigned short sched_proximo_indice()
+
+short sched_proximo_indice()
 {
-	return 0;
+	return -1;
 }
+
 
 void sched_handler_teclado(unsigned int tecla)
 {

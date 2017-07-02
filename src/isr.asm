@@ -5,7 +5,6 @@
 ; definicion de rutinas de atencion de interrupciones
 
 %include "imprimir.mac"
-%include "idle.asm"
 
 BITS 32
 
@@ -97,7 +96,6 @@ _isr%1:
 ; Scheduler
 isrnumero:           dd 0x00000000
 isrClock:            db '|/-\'
-teclaPresionada:     db 0x0
 
 ;;
 ;; Rutina de atención de las EXCEPCIONES
@@ -127,14 +125,24 @@ ISR 19
 ;; -------------------------------------------------------------------------- ;;
 global _isr32
 _isr32:
+	pushad
+	pushfd
 
-pushad
-call fin_intr_pic1
+	call fin_intr_pic1
+	call proximo_reloj
+	call sched_proximo_indice
 
-call proximo_reloj
+	cmp ax, -1 ; TODO: Revisar el valor contra el que comparo
+	je .fin
+	mov [sched_tarea_selector], ax
+	jmp far [sched_tarea_offset]
 
-popad
-iret
+	.fin:
+		popfd
+		popad
+		iret
+
+
 
 
 ;;
