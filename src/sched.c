@@ -42,6 +42,7 @@ void sched_inicializar()
 	infoJuego.zombies_disponibles[1] = "M"; // Mago
 	infoJuego.zombies_disponibles[2] = "C"; // Clerigo
 
+	// Cargo los selectores de tss de las tareas
 	int gdtA = GDT_TSS_TAREA_A_0_DESC;
 	int gdtB = GDT_TSS_TAREA_B_0_DESC;
 
@@ -67,24 +68,87 @@ void sched_inicializar()
 
 unsigned short sched_proximo_indice()
 {
-	int i = 0xFF;
-	// task_info* tareas;
-	// unsigned char actual;
+	task_info* tareas;
+	unsigned char* actual;
+	int i;
+	unsigned short res;
 
-	// if ( !infoJuego.jugador_de_turno )
-	// {
-	// 	tareas = (task_info*) &infoJuego.tareasA;
-	// 	actual = (infoJuego.tarea_actual_A + 1) % 8;
-	// }
-	// else
-	// {
-	// 	tareas = (task_info*) &infoJuego.tareasB;
-	// 	actual = (infoJuego.tarea_actual_B + 1) % 8;
-	// }
+	// Veo si es el turno del jugador A o del B
+	if ( !infoJuego.jugador_de_turno )
+	{
+		tareas = (task_info*) &infoJuego.tareasA;
+		actual = (unsigned char*) &infoJuego.tarea_actual_A;
+		i = (infoJuego.tarea_actual_A + 1) % 8;
+	}
+	else
+	{
+		tareas = (task_info*) &infoJuego.tareasB;
+		actual = (unsigned char*) &infoJuego.tarea_actual_B;
+		i = (infoJuego.tarea_actual_B + 1) % 8;
+	}
 
-	// while (  )
+	// Busco la siguiente tarea activa
+	while ( i != *actual && !tareas[i].esta_activa )
+	{
+		i = (i + 1) % 8;
+	}
 
-	return i;
+	// Chequeo que haya una tarea activa distinta de la actual
+	if ( tareas[i].esta_activa )
+	{
+		if ( i != *actual )
+		{
+			// Actualizo la tarea actual y devuelvo su selector de tss
+			*actual = i;
+			res = tareas[i].selector_tss;
+			infoJuego.jugador_de_turno = !infoJuego.jugador_de_turno; // El próximo turno será del otro jugador
+		}
+		else
+		{
+			res = 0;
+		}
+	}
+	else
+	{
+		res = 0;
+	}
+
+	return res;
+}
+
+
+unsigned short sched_proximo_indice_libre(unsigned int jugador)
+{
+	task_info* tareas;
+	int i = 0;
+	unsigned short res;
+
+	// Busco en la lista de tareas del jugador correspondiente
+	if ( !jugador )
+	{
+		tareas = (task_info*) &infoJuego.tareasA;
+	}
+	else
+	{
+		tareas = (task_info*) &infoJuego.tareasB;
+	}
+
+	while ( i < CANT_ZOMBIS && tareas[i].esta_activa )
+	{
+		++i;
+	}
+
+	// Si llegué hasta el final es porque no había un tss libre
+	if ( i == CANT_ZOMBIS )
+	{
+		res = 0;
+	}
+	else
+	{
+		res = tareas[i].selector_tss;
+	}
+
+	return res;
 }
 
 

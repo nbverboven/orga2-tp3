@@ -13,6 +13,7 @@
 
 void sched_inicializar();
 unsigned short sched_proximo_indice();
+unsigned short sched_proximo_indice_libre(unsigned int);
 void sched_handler_teclado(unsigned int tecla);
 
 // typedef enum clases_zombie_e { Guerrero = 0, Mago = 1, Clerigo = 2 } clases_zombie;

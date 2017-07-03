@@ -75,35 +75,32 @@ void tss_inicializar_idle()
 void tss_inicializar_zombie(unsigned int codigo_zombie, unsigned int jugador,
                             unsigned int posicion_x, unsigned int posicion_y)
 {
-	unsigned short i = sched_proximo_indice();
-	tss* tss_zombie;
+	// Obtengo el selector del primer tss libre para el jugador
+	unsigned short i = sched_proximo_indice_libre(jugador);
 
-	if ( jugador == JUGADOR_A )
-	{
-		tss_zombie = (tss*) &tss_zombisA;
+	// Me fijo que ese tss no sea el descriptor nulo (es decir, que efectivamente haya un tss libre)
+	if ( i != 0 )
+	{	
+		tss* tss_zombie = (tss*) &gdt[(i >> 12)];
+
+		// Inicializo el TSS de la tarea para el jugador correspondiente
+		tss_zombie->cr3    = (unsigned int) mmu_inicializar_dir_zombi(codigo_zombie, jugador, posicion_x, posicion_y);
+		tss_zombie->eip    = DIR_VIRTUAL_MAPA;
+		tss_zombie->ebp    = DIR_VIRTUAL_MAPA + 0x1000;
+		tss_zombie->esp    = DIR_VIRTUAL_MAPA + 0x1000;
+		tss_zombie->eflags = 0x00000202;
+		tss_zombie->cs     = SELECTOR_CODIGO_LVL3;
+		tss_zombie->ds     = SELECTOR_DATOS_LVL3;
+		tss_zombie->es     = SELECTOR_DATOS_LVL3;
+		tss_zombie->gs     = SELECTOR_DATOS_LVL3;
+		tss_zombie->fs     = SELECTOR_VIDEO;
+		tss_zombie->ss     = SELECTOR_DATOS_LVL3;
+		tss_zombie->esp0   = mmu_proxima_pagina_fisica_libre() + 0x1000;
+		tss_zombie->ss0    = SELECTOR_DATOS_LVL0;
+
+		tss_zombie->eax    = 0;
+		tss_zombie->ebx    = 0;
+		tss_zombie->ecx    = 0;
+		tss_zombie->edx    = 0;
 	}
-	else
-	{
-		tss_zombie = (tss*) &tss_zombisB;	
-	}
-
-	// Inicializo el TSS de la tarea para el jugador correspondiente
-	tss_zombie[i].cr3    = (unsigned int) mmu_inicializar_dir_zombi(codigo_zombie, jugador, posicion_x, posicion_y);
-	tss_zombie[i].eip    = DIR_VIRTUAL_MAPA;
-	tss_zombie[i].ebp    = DIR_VIRTUAL_MAPA + 0x1000;
-	tss_zombie[i].esp    = DIR_VIRTUAL_MAPA + 0x1000;
-	tss_zombie[i].eflags = 0x00000202;
-	tss_zombie[i].cs     = SELECTOR_CODIGO_LVL3;
-	tss_zombie[i].ds     = SELECTOR_DATOS_LVL3;
-	tss_zombie[i].es     = SELECTOR_DATOS_LVL3;
-	tss_zombie[i].gs     = SELECTOR_DATOS_LVL3;
-	tss_zombie[i].fs     = SELECTOR_VIDEO;
-	tss_zombie[i].ss     = SELECTOR_DATOS_LVL3;
-	tss_zombie[i].esp0   = mmu_proxima_pagina_fisica_libre() + 0x1000;
-	tss_zombie[i].ss0    = SELECTOR_DATOS_LVL0;
-
-	tss_zombie[i].eax    = 0;
-	tss_zombie[i].ebx    = 0;
-	tss_zombie[i].ecx    = 0;
-	tss_zombie[i].edx    = 0;
 }

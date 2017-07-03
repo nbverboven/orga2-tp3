@@ -132,7 +132,7 @@ _isr32:
 	call proximo_reloj
 	call sched_proximo_indice
 
-	cmp ax, 0xFF ; TODO: Revisar el valor contra el que comparo
+	cmp ax, 0 ; Veo de estar saltando a una tarea válida, distinta de la actual
 	je .fin
 	mov [sched_tarea_selector], ax
 	jmp far [sched_tarea_offset]
