@@ -75,6 +75,7 @@ extern fin_intr_pic1
 ;; Sched
 extern sched_proximo_indice
 extern sched_handler_teclado
+extern sched_ejecutar_orden_66
 
 ;;
 ;; Definición de MACROS
@@ -134,6 +135,9 @@ _isr32:
 
 	cmp ax, 0 ; Veo de estar saltando a una tarea válida, distinta de la actual
 	je .fin
+	str cx ; Guardo el contenido del task register en cx
+	cmp ax, cx ; Veo de no saltar si la próxima tarea es la misma que ya estoy corriendo
+	je .fin
 	mov [sched_tarea_selector], ax
 	jmp far [sched_tarea_offset]
 
@@ -180,8 +184,13 @@ _isr66:
 	pushfd
 
 	call fin_intr_pic1
+	push eax
+	call sched_ejecutar_orden_66
+	add esp, 4
 
-	mov eax, 0x42
+	mov ax, 0x70
+	mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle
+	jmp far [sched_tarea_offset]
 
 	popfd
 	popad

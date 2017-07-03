@@ -7,6 +7,7 @@
 
 #include "sched.h"
 #include "screen.h"
+#include "game.h"
 
 jugador jugadorA;
 jugador jugadorB;
@@ -69,8 +70,8 @@ void sched_inicializar()
 unsigned short sched_proximo_indice()
 {
 	task_info* tareas;
+	unsigned char i;
 	unsigned char* actual;
-	int i;
 	unsigned short res;
 
 	// Veo si es el turno del jugador A o del B
@@ -93,25 +94,19 @@ unsigned short sched_proximo_indice()
 		i = (i + 1) % 8;
 	}
 
-	// Chequeo que haya una tarea activa distinta de la actual
+	// Chequeo que haya una tarea activa (puede ser la actual o no)
 	if ( tareas[i].esta_activa )
 	{
-		if ( i != *actual )
-		{
-			// Actualizo la tarea actual y devuelvo su selector de tss
-			*actual = i;
-			res = tareas[i].selector_tss;
-			infoJuego.jugador_de_turno = !infoJuego.jugador_de_turno; // El próximo turno será del otro jugador
-		}
-		else
-		{
-			res = 0;
-		}
+		// Actualizo la tarea actual y devuelvo su selector de tss
+		*actual = i;
+		res = tareas[i].selector_tss;
 	}
 	else
 	{
 		res = 0;
 	}
+
+	infoJuego.jugador_de_turno = !infoJuego.jugador_de_turno; // El próximo turno será del otro jugador
 
 	return res;
 }
@@ -298,5 +293,11 @@ void sched_handler_teclado(unsigned int tecla)
 			print( asd, 25, 0, attr );
 			break;
 	}
+}
+
+
+void sched_ejecutar_orden_66(direccion d)
+{
+
 }
 
