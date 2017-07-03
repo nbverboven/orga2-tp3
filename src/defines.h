@@ -14,6 +14,7 @@
 #define TRUE                    0x00000001
 #define FALSE                   0x00000000
 #define ERROR                   1
+#define NULL                    0
 
 
 /* Misc */
