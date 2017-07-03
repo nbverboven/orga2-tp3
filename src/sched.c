@@ -36,6 +36,8 @@ void sched_inicializar()
 	infoJuego.jugador_B = jugadorB;
 	infoJuego.modo_debug_on = 0;
 	infoJuego.jugador_de_turno = 0; // Empieza el jugador A
+	infoJuego.tarea_actual_A = 0;
+	infoJuego.tarea_actual_B = 0;
 	infoJuego.zombies_disponibles[0] = "G"; // Guerrero
 	infoJuego.zombies_disponibles[1] = "M"; // Mago
 	infoJuego.zombies_disponibles[2] = "C"; // Clerigo
@@ -47,10 +49,8 @@ void sched_inicializar()
 	{
 		infoJuego.tareasA[i].esta_activa = 0;
 		infoJuego.tareasB[i].esta_activa = 0;
-		infoJuego.tareasA[i].estado_tarea = NULL;
-		infoJuego.tareasB[i].estado_tarea = NULL;
-		infoJuego.tareasA[i].indice_gdt = gdtA;
-		infoJuego.tareasB[i].indice_gdt = gdtB;
+		infoJuego.tareasA[i].selector_tss = gdtA << 3;
+		infoJuego.tareasB[i].selector_tss = gdtB << 3;
 
 		++gdtA;
 		++gdtB;
@@ -67,33 +67,24 @@ void sched_inicializar()
 
 unsigned short sched_proximo_indice()
 {
-	// short res; // Devuelvo esto si no hay ninguna tarea corriendo
-	int i = 0;
+	int i = 0xFF;
+	// task_info* tareas;
+	// unsigned char actual;
 
 	// if ( !infoJuego.jugador_de_turno )
 	// {
-	// 	// Si le toca al jugador A
-	// 	while ( i < CANT_ZOMBIS && !infoJuego.tareasA[i].activa )
-	// 	{
-	// 		++i;
-	// 	}
+	// 	tareas = (task_info*) &infoJuego.tareasA;
+	// 	actual = (infoJuego.tarea_actual_A + 1) % 8;
 	// }
 	// else
 	// {
-	// 	// Si le toca al jugador B
-	// 	while ( i < CANT_ZOMBIS && !infoJuego.tareasBi].activa )
-	// 	{
-	// 		++i;
-	// 	}
+	// 	tareas = (task_info*) &infoJuego.tareasB;
+	// 	actual = (infoJuego.tarea_actual_B + 1) % 8;
 	// }
 
-	return i;
-}
+	// while (  )
 
-unsigned short sched_proximo_indice_gdt()
-{
-	unsigned short res = sched_proximo_indice(); 
-	return res;
+	return i;
 }
 
 
@@ -133,22 +124,22 @@ void sched_handler_teclado(unsigned int tecla)
 		// A
 		case 0x1E:
 			asd = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
-			print( asd, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_RED | C_BG_RED  );
+			print( asd, jugadorA.posicion_x, jugadorA.posicion_y+1, C_FG_RED | C_BG_RED  );
 
 			jugadorA.proximo_zombie_a_lanzar = (jugadorA.proximo_zombie_a_lanzar + 2) % 3;
 			asd = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
-			print( asd, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_WHITE | C_BG_RED  );
+			print( asd, jugadorA.posicion_x, jugadorA.posicion_y+1, C_FG_WHITE | C_BG_RED  );
 
 			break;
 
 		// D
 		case 0x20:
 			asd = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
-			print( asd, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_RED | C_BG_RED  );
+			print( asd, jugadorA.posicion_x, jugadorA.posicion_y+1, C_FG_RED | C_BG_RED  );
 
 			jugadorA.proximo_zombie_a_lanzar = (jugadorA.proximo_zombie_a_lanzar + 1) % 3;
 			asd = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
-			print( asd, jugadorA.posicion_x, jugadorA.posicion_y, C_FG_WHITE | C_BG_RED  );
+			print( asd, jugadorA.posicion_x, jugadorA.posicion_y+1, C_FG_WHITE | C_BG_RED  );
 
 			break;
 
@@ -193,22 +184,22 @@ void sched_handler_teclado(unsigned int tecla)
 		// J
 		case 0x24:
 			asd = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
-			print( asd, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_BLUE | C_BG_BLUE  );
+			print( asd, jugadorB.posicion_x, jugadorB.posicion_y+1, C_FG_BLUE | C_BG_BLUE  );
 
 			jugadorB.proximo_zombie_a_lanzar = (jugadorB.proximo_zombie_a_lanzar + 2) % 3;
 			asd = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
-			print( asd, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_WHITE | C_BG_BLUE  );
+			print( asd, jugadorB.posicion_x, jugadorB.posicion_y+1, C_FG_WHITE | C_BG_BLUE  );
 
 			break;
 
 		// L
 		case 0x26:
 			asd = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
-			print( asd, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_BLUE | C_BG_BLUE  );
+			print( asd, jugadorB.posicion_x, jugadorB.posicion_y+1, C_FG_BLUE | C_BG_BLUE  );
 
 			jugadorB.proximo_zombie_a_lanzar = (jugadorB.proximo_zombie_a_lanzar + 1) % 3;
 			asd = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
-			print( asd, jugadorB.posicion_x, jugadorB.posicion_y, C_FG_WHITE | C_BG_BLUE  );
+			print( asd, jugadorB.posicion_x, jugadorB.posicion_y+1, C_FG_WHITE | C_BG_BLUE  );
 
 			break;
 

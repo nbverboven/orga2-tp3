@@ -13,7 +13,6 @@
 
 void sched_inicializar();
 unsigned short sched_proximo_indice();
-unsigned short sched_proximo_indice_gdt();
 void sched_handler_teclado(unsigned int tecla);
 
 // typedef enum clases_zombie_e { Guerrero = 0, Mago = 1, Clerigo = 2 } clases_zombie;
@@ -31,8 +30,7 @@ typedef struct str_jugador {
 
 typedef struct str_task_info {
 	unsigned char  esta_activa;
-	unsigned short indice_gdt;
-	tss*           estado_tarea;
+	unsigned short selector_tss;
 
 } __attribute__((__packed__, aligned (8))) task_info;
 
