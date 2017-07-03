@@ -14,6 +14,7 @@ void mmu_inicializar()
 	proxima_pagina_libre = 0x100000;
 }
 
+
 void mmu_inicializar_dir_kernel()
 {
 	int* page_directory = (int*) PAGE_DIRECTORY_KERNEL;  // PAGE_DIRECTORY_KERNEL = 0x27000
@@ -33,6 +34,7 @@ void mmu_inicializar_dir_kernel()
 	}
 }
 
+
 unsigned int mmu_proxima_pagina_fisica_libre()
 {
   unsigned int pagina = proxima_pagina_libre;
@@ -48,6 +50,7 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int jugador,
 
 
 	/************** Identity mapping de los primeros 4Mb **************/
+
 	int* tabla_identity_map = (int*) mmu_proxima_pagina_fisica_libre();
 
 	// Nivel de privilegio de usuario, solo lectura, página presente
@@ -66,7 +69,6 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int jugador,
 	}
 
 	/********************* Fin identity mapping ***********************/
-
 
 
 	// Mapeo las páginas de la tarea
@@ -111,6 +113,7 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int jugador,
 
 	return page_directory;
 }
+
 
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica,
                        unsigned char rw, unsigned char us)

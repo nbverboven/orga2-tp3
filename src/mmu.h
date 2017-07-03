@@ -17,6 +17,7 @@ void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
 unsigned int mmu_proxima_pagina_fisica_libre();
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char rw, unsigned char us);
+// unsigned int mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char rw, unsigned char us);
 void mmu_desmapear_pagina(unsigned int virtual, unsigned int cr3);
 int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int jugador,
 	                           unsigned int posicion_en_x, unsigned int posicion_en_y);
@@ -33,7 +34,7 @@ typedef struct str_pd_entry {
 	unsigned char page_size:1;                  // 0 = 4Kb, 1 = 4Mb
 	unsigned char ignored_2:4;
 	unsigned int page_table_address:20;         // Dirección física de la tabla de página
-} __attribute__((__packed__, aligned (8))) pd_entry;
+} __attribute__((__packed__, aligned (4))) pd_entry;
 
 
 typedef struct str_pt_entry {
@@ -48,7 +49,7 @@ typedef struct str_pt_entry {
 	unsigned char global:1;                     // (?)
 	unsigned char ignored:3;
 	unsigned int page_frame_address:20;         // Dirección física del frame de una página de 4Kb
-} __attribute__((__packed__, aligned (8))) pt_entry;
+} __attribute__((__packed__, aligned (4))) pt_entry;
 
 
 // Una estructura auxiliar que ocupa 4096 bytes (4 Kb)

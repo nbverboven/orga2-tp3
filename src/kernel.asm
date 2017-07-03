@@ -192,33 +192,33 @@ modoprotegido:
 	; Habilitar interrupciones
 	sti
 
+
+
+   ; Usé esto para testear el mapeo de los zombies
+   ; mov eax, 0
+   ; mov ebx, 1
+   ; mov ecx, 0
+   ; mov edx, 0x10000
+
+   ; push eax
+   ; push ebx
+   ; push ecx
+   ; push edx
+
+   ; call tss_inicializar_zombie
+
+   
+   ; ; mov ax, 0x78 ; selector del tss de la primera tarea del jugador A (índice 15 de la gdt)
+   ; mov ax, 0xB8 ; selector del tss de la primera tarea del jugador B (índice 23 de la gdt)
+   ; ltr ax
+   ; mov eax, 0x00100000
+   ; mov cr3, eax
+
+   ; xchg bx,bx
+
+
 	; Saltar a la primera tarea: Idle
 	jmp SELECTOR_TSS_IDLE:0
-
-
-	; Usé esto para testear el mapeo de los zombies
-	; mov eax, 1
-	; mov ebx, 1
-	; mov ecx, 0
-	; mov edx, 0x10000
-
-	; push eax
-	; push ebx
-	; push ecx
-	; push edx
-
-	; call tss_inicializar_zombie
-
-	; ;mov ax, 0xB8 ; selector del tss de la primera tarea del jugador B (índice 23 de la gdt)
-	; mov ax, 0x78 ; selector del tss de la primera tarea del jugador B (índice 15 de la gdt)
-	; ltr ax
-	; mov eax, 0x00100000
-	; mov cr3, eax
-	; xchg bx,bx
-	; mov cr3, eax
-
-
-
 
 	; Ciclar infinitamente (por si algo sale mal...)
 	mov eax, 0xFFFF
