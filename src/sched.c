@@ -17,20 +17,18 @@ info_juego infoJuego;
 void sched_inicializar()
 {
 	// Inicializo toodas las estructuras del scheduler
-	jugadorA.id = 0;
 	jugadorA.zombies_lanzados = 0;
 	jugadorA.zombies_restantes = 13;
 	jugadorA.posicion_x = 0; // Posición inicial (relativa al mapa, no a las dimensiones de la pantalla)
 	jugadorA.posicion_y = 21;
-	jugadorA.proximo_zombie_a_lanzar = 0; // El primer zombie que tiene disponible para lanzar es de tipo Guerrero
+	jugadorA.proximo_zombie_a_lanzar = guerrero;
 	jugadorA.puntaje_actual = 0;
 
-	jugadorB.id = 1;
 	jugadorB.zombies_lanzados = 0;
 	jugadorB.zombies_restantes = 13;
 	jugadorB.posicion_x = 79;
 	jugadorB.posicion_y = 21;
-	jugadorB.proximo_zombie_a_lanzar = 0;
+	jugadorB.proximo_zombie_a_lanzar = guerrero;
 	jugadorB.puntaje_actual = 0;
 
 	infoJuego.jugador_A = jugadorA;
@@ -147,12 +145,62 @@ unsigned short sched_proximo_indice_libre(unsigned int jugador)
 }
 
 
+void sched_lanzar_zombie(unsigned int jugador)
+{
+	task_info* tareas;
+	int i = 0;
+
+	// Busco en la lista de tareas del jugador correspondiente
+	if ( !jugador )
+	{
+		tareas = (task_info*) &infoJuego.tareasA;
+	}
+	else
+	{
+		tareas = (task_info*) &infoJuego.tareasB;
+	}
+
+	while ( i < CANT_ZOMBIS && tareas[i].esta_activa )
+	{
+		++i;
+	}
+
+	if ( i < CANT_ZOMBIS )
+	{
+
+		if ( !jugador )
+		{
+			tareas[i].z_tipo = infoJuego.jugador_A.proximo_zombie_a_lanzar;
+			tareas[i].z_posicion_x = 1;
+			tareas[i].z_posicion_y = infoJuego.jugador_A.posicion_y;
+			tss_inicializar_zombie( sched_dame_codigo(infoJuego.jugador_A.proximo_zombie_a_lanzar, JUGADOR_A), 
+								    JUGADOR_A, tareas[i].z_posicion_x, tareas[i].z_posicion_y );
+			// ltr(tareas[i].selector_tss);
+			// breakpoint();
+			infoJuego.jugador_A.zombies_lanzados += 1;
+			infoJuego.jugador_A.zombies_restantes -= 1;
+			tareas[i].esta_activa = 1;
+		}
+		else
+		{
+			tareas[i].z_tipo = infoJuego.jugador_B.proximo_zombie_a_lanzar;
+			tareas[i].z_posicion_x = 42;
+			tareas[i].z_posicion_y = infoJuego.jugador_B.posicion_y;
+			tss_inicializar_zombie( sched_dame_codigo(infoJuego.jugador_B.proximo_zombie_a_lanzar, JUGADOR_B), 
+								    JUGADOR_B, tareas[i].z_posicion_x, tareas[i].z_posicion_y );
+			infoJuego.jugador_B.zombies_lanzados += 1;
+			infoJuego.jugador_B.zombies_restantes -= 1;
+			tareas[i].esta_activa = 1;
+		}
+	}
+}
+
+
 void sched_handler_teclado(unsigned int tecla)
 {
 	const char* asd;
 	const char* tz;
 	unsigned short attr;
-	// unsigned short i;
 
 	switch ( tecla )
 	{
@@ -160,59 +208,49 @@ void sched_handler_teclado(unsigned int tecla)
 
 		// W
 		case 0x11:
-			tz = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
-			print( tz, jugadorA.posicion_x, jugadorA.posicion_y+1, C_FG_RED | C_BG_RED  );
+			tz = infoJuego.zombies_disponibles[infoJuego.jugador_A.proximo_zombie_a_lanzar];
+			print( tz, infoJuego.jugador_A.posicion_x, infoJuego.jugador_A.posicion_y+1, C_FG_RED | C_BG_RED  );
 
-			// jugadorA.posicion_y = (jugadorA.posicion_y == 1) ? 44 : (jugadorA.posicion_y - 1);
-			jugadorA.posicion_y = (jugadorA.posicion_y + 43) % 44;
-			print( tz, jugadorA.posicion_x, jugadorA.posicion_y+1, C_FG_WHITE | C_BG_RED  );
+			infoJuego.jugador_A.posicion_y = (infoJuego.jugador_A.posicion_y + 43) % 44;
+			print( tz, infoJuego.jugador_A.posicion_x, infoJuego.jugador_A.posicion_y+1, C_FG_WHITE | C_BG_RED  );
 
 			break;
 
 		// S
 		case 0x1F:
-			tz = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
-			print( tz, jugadorA.posicion_x, jugadorA.posicion_y+1, C_FG_RED | C_BG_RED  );
+			tz = infoJuego.zombies_disponibles[infoJuego.jugador_A.proximo_zombie_a_lanzar];
+			print( tz, infoJuego.jugador_A.posicion_x, infoJuego.jugador_A.posicion_y+1, C_FG_RED | C_BG_RED  );
 
-			// jugadorA.posicion_y = (jugadorA.posicion_y == 44) ? 1 : (jugadorA.posicion_y + 1);
-			jugadorA.posicion_y = (jugadorA.posicion_y + 1) % 44;
-			print( tz, jugadorA.posicion_x, jugadorA.posicion_y+1, C_FG_WHITE | C_BG_RED  );
+			infoJuego.jugador_A.posicion_y = (infoJuego.jugador_A.posicion_y + 1) % 44;
+			print( tz, infoJuego.jugador_A.posicion_x, infoJuego.jugador_A.posicion_y+1, C_FG_WHITE | C_BG_RED  );
 
 			break;
 
 		// A
 		case 0x1E:
-			asd = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
-			print( asd, jugadorA.posicion_x, jugadorA.posicion_y+1, C_FG_RED | C_BG_RED  );
+			asd = infoJuego.zombies_disponibles[infoJuego.jugador_A.proximo_zombie_a_lanzar];
+			print( asd, infoJuego.jugador_A.posicion_x, infoJuego.jugador_A.posicion_y+1, C_FG_RED | C_BG_RED  );
 
-			jugadorA.proximo_zombie_a_lanzar = (jugadorA.proximo_zombie_a_lanzar + 2) % 3;
-			asd = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
-			print( asd, jugadorA.posicion_x, jugadorA.posicion_y+1, C_FG_WHITE | C_BG_RED  );
+			infoJuego.jugador_A.proximo_zombie_a_lanzar = (infoJuego.jugador_A.proximo_zombie_a_lanzar + 2) % 3;
+			asd = infoJuego.zombies_disponibles[infoJuego.jugador_A.proximo_zombie_a_lanzar];
+			print( asd, infoJuego.jugador_A.posicion_x, infoJuego.jugador_A.posicion_y+1, C_FG_WHITE | C_BG_RED  );
 
 			break;
 
 		// D
 		case 0x20:
-			asd = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
-			print( asd, jugadorA.posicion_x, jugadorA.posicion_y+1, C_FG_RED | C_BG_RED  );
+			asd = infoJuego.zombies_disponibles[infoJuego.jugador_A.proximo_zombie_a_lanzar];
+			print( asd, infoJuego.jugador_A.posicion_x, infoJuego.jugador_A.posicion_y+1, C_FG_RED | C_BG_RED  );
 
-			jugadorA.proximo_zombie_a_lanzar = (jugadorA.proximo_zombie_a_lanzar + 1) % 3;
-			asd = infoJuego.zombies_disponibles[jugadorA.proximo_zombie_a_lanzar];
-			print( asd, jugadorA.posicion_x, jugadorA.posicion_y+1, C_FG_WHITE | C_BG_RED  );
+			infoJuego.jugador_A.proximo_zombie_a_lanzar = (infoJuego.jugador_A.proximo_zombie_a_lanzar + 1) % 3;
+			asd = infoJuego.zombies_disponibles[infoJuego.jugador_A.proximo_zombie_a_lanzar];
+			print( asd, infoJuego.jugador_A.posicion_x, infoJuego.jugador_A.posicion_y+1, C_FG_WHITE | C_BG_RED  );
 
 			break;
 
 		// LShift
 		case 0x2A:
-			asd = (const char*) "LShift";
-			attr = ( C_FG_LIGHT_CYAN | C_BG_BLACK );
-			print( asd, 0, 0, attr );
-			break;
-
-		case 0xAA:
-			asd = (const char*) "LShift";
-			attr = ( C_FG_BLACK | C_BG_BLACK );
-			print( asd, 0, 0, attr );
+			sched_lanzar_zombie(JUGADOR_A);
 			break;
 
 		/************** Fin teclas jugador A **************/
@@ -222,43 +260,43 @@ void sched_handler_teclado(unsigned int tecla)
 
 		// I
 		case 0x17:
-			tz = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
-			print( tz, jugadorB.posicion_x, jugadorB.posicion_y+1, C_FG_BLUE | C_BG_BLUE  );
+			tz = infoJuego.zombies_disponibles[infoJuego.jugador_B.proximo_zombie_a_lanzar];
+			print( tz, infoJuego.jugador_B.posicion_x, infoJuego.jugador_B.posicion_y+1, C_FG_BLUE | C_BG_BLUE  );
 
-			jugadorB.posicion_y = (jugadorB.posicion_y + 43) % 44;
-			print( tz, jugadorB.posicion_x, jugadorB.posicion_y+1, C_FG_WHITE | C_BG_BLUE  );
+			infoJuego.jugador_B.posicion_y = (infoJuego.jugador_B.posicion_y + 43) % 44;
+			print( tz, infoJuego.jugador_B.posicion_x, infoJuego.jugador_B.posicion_y+1, C_FG_WHITE | C_BG_BLUE  );
 
 			break;
 
 		// K
 		case 0x25:
-			tz = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
-			print( tz, jugadorB.posicion_x, jugadorB.posicion_y+1, C_FG_BLUE | C_BG_BLUE  );
+			tz = infoJuego.zombies_disponibles[infoJuego.jugador_B.proximo_zombie_a_lanzar];
+			print( tz, infoJuego.jugador_B.posicion_x, infoJuego.jugador_B.posicion_y+1, C_FG_BLUE | C_BG_BLUE  );
 
-			jugadorB.posicion_y = (jugadorB.posicion_y + 1) % 44;
-			print( tz, jugadorB.posicion_x, jugadorB.posicion_y+1, C_FG_WHITE | C_BG_BLUE  );
+			infoJuego.jugador_B.posicion_y = (infoJuego.jugador_B.posicion_y + 1) % 44;
+			print( tz, infoJuego.jugador_B.posicion_x, infoJuego.jugador_B.posicion_y+1, C_FG_WHITE | C_BG_BLUE  );
 
 			break;
 
 		// J
 		case 0x24:
-			asd = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
-			print( asd, jugadorB.posicion_x, jugadorB.posicion_y+1, C_FG_BLUE | C_BG_BLUE  );
+			asd = infoJuego.zombies_disponibles[infoJuego.jugador_B.proximo_zombie_a_lanzar];
+			print( asd, infoJuego.jugador_B.posicion_x, infoJuego.jugador_B.posicion_y+1, C_FG_BLUE | C_BG_BLUE  );
 
-			jugadorB.proximo_zombie_a_lanzar = (jugadorB.proximo_zombie_a_lanzar + 2) % 3;
-			asd = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
-			print( asd, jugadorB.posicion_x, jugadorB.posicion_y+1, C_FG_WHITE | C_BG_BLUE  );
+			infoJuego.jugador_B.proximo_zombie_a_lanzar = (infoJuego.jugador_B.proximo_zombie_a_lanzar + 2) % 3;
+			asd = infoJuego.zombies_disponibles[infoJuego.jugador_B.proximo_zombie_a_lanzar];
+			print( asd, infoJuego.jugador_B.posicion_x, infoJuego.jugador_B.posicion_y+1, C_FG_WHITE | C_BG_BLUE  );
 
 			break;
 
 		// L
 		case 0x26:
-			asd = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
-			print( asd, jugadorB.posicion_x, jugadorB.posicion_y+1, C_FG_BLUE | C_BG_BLUE  );
+			asd = infoJuego.zombies_disponibles[infoJuego.jugador_B.proximo_zombie_a_lanzar];
+			print( asd, infoJuego.jugador_B.posicion_x, infoJuego.jugador_B.posicion_y+1, C_FG_BLUE | C_BG_BLUE  );
 
-			jugadorB.proximo_zombie_a_lanzar = (jugadorB.proximo_zombie_a_lanzar + 1) % 3;
-			asd = infoJuego.zombies_disponibles[jugadorB.proximo_zombie_a_lanzar];
-			print( asd, jugadorB.posicion_x, jugadorB.posicion_y+1, C_FG_WHITE | C_BG_BLUE  );
+			infoJuego.jugador_B.proximo_zombie_a_lanzar = (infoJuego.jugador_B.proximo_zombie_a_lanzar + 1) % 3;
+			asd = infoJuego.zombies_disponibles[infoJuego.jugador_B.proximo_zombie_a_lanzar];
+			print( asd, infoJuego.jugador_B.posicion_x, infoJuego.jugador_B.posicion_y+1, C_FG_WHITE | C_BG_BLUE  );
 
 			break;
 
@@ -298,6 +336,116 @@ void sched_handler_teclado(unsigned int tecla)
 
 void sched_ejecutar_orden_66(direccion d)
 {
+	unsigned char j = infoJuego.jugador_de_turno;
+	unsigned char i;
+	task_info* actual; // Puntero al zombie que llamó a mover
 
+	if ( !j )
+	{
+		i = infoJuego.tarea_actual_A;
+		actual = (task_info*) &(infoJuego.tareasA[i]);
+	}
+	else
+	{
+		i = infoJuego.tarea_actual_B;
+		actual = (task_info*) &(infoJuego.tareasB[i]);
+	}
+
+	print( "x", actual->z_posicion_x+1, actual->z_posicion_y+1, C_FG_LIGHT_GREY | C_BG_GREEN );
+
+	//tss* estado_z = sched_dame_tss( actual->selector_tss ); 
+	unsigned int CR3 = rcr3();
+	unsigned int codigo_z = sched_dame_codigo( actual->z_tipo, infoJuego.jugador_de_turno );
+
+	switch ( d )
+	{
+		case IZQ:
+			actual->z_posicion_y = ((actual->z_posicion_y)+43+2*j)%44;
+			mmu_desmapear_paginas_zombie( CR3 );
+			mmu_mapear_paginas_zombie( codigo_z, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
+			break;
+
+		case DER:
+			actual->z_posicion_y = ((actual->z_posicion_y)+1+42*j)%44;
+			mmu_desmapear_paginas_zombie( CR3 );
+			mmu_mapear_paginas_zombie( codigo_z, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
+			break;
+
+		case ADE:
+			actual->z_posicion_x = (actual->z_posicion_x)+1-2*j;
+			mmu_desmapear_paginas_zombie( CR3 );
+			mmu_mapear_paginas_zombie( codigo_z, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
+			break;
+
+		case ATR:
+			actual->z_posicion_x = (actual->z_posicion_x)-1+2*j;
+			mmu_desmapear_paginas_zombie( CR3 );
+			mmu_mapear_paginas_zombie( codigo_z, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
+			break;
+	}
+
+	if ( !j )
+	{
+		print( infoJuego.zombies_disponibles[actual->z_tipo], actual->z_posicion_x+1, 
+			   actual->z_posicion_y+1, C_FG_WHITE | C_BG_BLUE );
+	}
+	else
+	{
+		print( infoJuego.zombies_disponibles[actual->z_tipo], actual->z_posicion_x+1, 
+			   actual->z_posicion_y+1, C_FG_WHITE | C_BG_RED );
+	}
 }
 
+
+// Toma como argumento un selector de tss
+tss* sched_dame_tss(unsigned short selector)
+{
+	gdt_entry* aux = (gdt_entry*) &gdt[selector >> 3];
+	tss* res = (tss*) ((unsigned int) aux->base_0_15 | ((unsigned int) aux->base_23_16) << 16  | ((unsigned int) aux->base_31_24) << 24 );
+	return res;
+}
+
+
+unsigned int sched_dame_codigo(zombie_type tipo, unsigned char j)
+{
+	unsigned int res;
+
+	if ( !j )
+	{
+		if ( tipo == guerrero )
+		{
+			res = DIR_CODIGO_TAREA_A_G;
+		}
+		else
+		{
+			if ( tipo == mago )
+			{
+				res = DIR_CODIGO_TAREA_A_M;
+			}
+			else
+			{
+				res = DIR_CODIGO_TAREA_A_C;
+			}
+		}
+	}
+	else
+	{
+		if ( tipo == guerrero )
+		{
+			res = DIR_CODIGO_TAREA_B_G;
+		}
+		else
+		{
+			if ( tipo == mago )
+			{
+				res = DIR_CODIGO_TAREA_B_M;
+			}
+			else
+			{
+				res = DIR_CODIGO_TAREA_B_C;
+			}
+		}
+	}
+
+	return res;
+}

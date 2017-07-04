@@ -11,20 +11,23 @@
 #include "screen.h"
 #include "tss.h"
 
+typedef enum zombie_type_e { guerrero = 0, mago = 1, clerigo = 2 } zombie_type;
+
 void sched_inicializar();
 unsigned short sched_proximo_indice();
 unsigned short sched_proximo_indice_libre(unsigned int);
 void sched_handler_teclado(unsigned int tecla);
 void sched_ejecutar_orden_66(direccion d);
+tss* sched_dame_tss(unsigned short selector);
+unsigned int sched_dame_codigo(zombie_type tipo, unsigned char j);
 
 
 typedef struct str_jugador {
-	unsigned char  id;
 	unsigned short zombies_lanzados;
 	unsigned short zombies_restantes;
 	unsigned short posicion_x;
 	unsigned short posicion_y;
-	unsigned short proximo_zombie_a_lanzar;
+	zombie_type    proximo_zombie_a_lanzar;
 	unsigned short puntaje_actual;
 } __attribute__((__packed__)) jugador;
 
@@ -32,6 +35,7 @@ typedef struct str_jugador {
 typedef struct str_task_info {
 	unsigned char  esta_activa;
 	unsigned short selector_tss;
+	zombie_type    z_tipo;
 	unsigned short z_posicion_x;
 	unsigned short z_posicion_y;
 } __attribute__((__packed__)) task_info;
@@ -47,8 +51,6 @@ typedef struct str_info_juego {
 	unsigned char tarea_actual_B;
 	task_info     tareasA[CANT_ZOMBIS];
 	task_info     tareasB[CANT_ZOMBIS];
-
-	
 } __attribute__((__packed__)) info_juego;
 
 

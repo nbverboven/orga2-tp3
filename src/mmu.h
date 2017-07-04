@@ -17,9 +17,11 @@ void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
 unsigned int mmu_proxima_pagina_fisica_libre();
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char rw, unsigned char us);
-// unsigned int mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char rw, unsigned char us);
 void mmu_desmapear_pagina(unsigned int virtual, unsigned int cr3);
+void mmu_desmapear_paginas_zombie(unsigned int cr3);
 int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int jugador,
+	                           unsigned int posicion_en_x, unsigned int posicion_en_y);
+void mmu_mapear_paginas_zombie(unsigned int codigo_tarea, unsigned int jugador, unsigned int cr3,
 	                           unsigned int posicion_en_x, unsigned int posicion_en_y);
 
 

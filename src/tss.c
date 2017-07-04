@@ -81,7 +81,7 @@ void tss_inicializar_zombie(unsigned int codigo_zombie, unsigned int jugador,
 	// Me fijo que ese tss no sea el descriptor nulo (es decir, que efectivamente haya un tss libre)
 	if ( i != 0 )
 	{	
-		tss* tss_zombie = (tss*) &gdt[(i >> 12)];
+		tss* tss_zombie = sched_dame_tss(i);
 
 		// Inicializo el TSS de la tarea para el jugador correspondiente
 		tss_zombie->cr3    = (unsigned int) mmu_inicializar_dir_zombi(codigo_zombie, jugador, posicion_x, posicion_y);

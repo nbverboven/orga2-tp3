@@ -138,6 +138,9 @@ _isr32:
 	str cx ; Guardo el contenido del task register en cx
 	cmp ax, cx ; Veo de no saltar si la próxima tarea es la misma que ya estoy corriendo
 	je .fin
+
+	; xchg bx, bx
+
 	mov [sched_tarea_selector], ax
 	jmp far [sched_tarea_offset]
 
@@ -187,6 +190,8 @@ _isr66:
 	push eax
 	call sched_ejecutar_orden_66
 	add esp, 4
+
+	; xchg bx, bx
 
 	mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. Indice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
 	mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle
