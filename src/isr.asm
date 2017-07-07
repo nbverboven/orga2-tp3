@@ -175,8 +175,8 @@ _isr33:
 %define ADE 0x83D
 %define ATR 0x732
 
-global _isr66
-_isr66:
+global _isr102
+_isr102:
 	pushad
 	pushfd
 
@@ -185,11 +185,11 @@ _isr66:
 	call sched_ejecutar_orden_66
 	add esp, 4
 
-	; xchg bx, bx
 
 	mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. índice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
 	mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle
 	jmp far [sched_tarea_offset]
+
 
 	popfd
 	popad

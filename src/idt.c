@@ -76,5 +76,5 @@ void idt_inicializar()
     IDT_ENTRY( 19, INTERRUPT_GATE_KERNEL  );
     IDT_ENTRY( 32, INTERRUPT_GATE_KERNEL  ); // Interrupción del reloj
     IDT_ENTRY( 33, INTERRUPT_GATE_KERNEL  ); // Interrupción del teclado
-    IDT_ENTRY( 66, INTERRUPT_GATE_USUARIO ); // Syscall mover
+    IDT_ENTRY( 102, INTERRUPT_GATE_USUARIO ); // Syscall mover
 }
