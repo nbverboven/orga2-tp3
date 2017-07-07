@@ -27,11 +27,11 @@
 #define JUGADOR_A               0
 #define JUGADOR_B               1
 
-#define SELECTOR_CODIGO_LVL0      0x40
-#define SELECTOR_DATOS_LVL0       0x50
-#define SELECTOR_CODIGO_LVL3      0x4B
-#define SELECTOR_DATOS_LVL3       0x5B
-#define SELECTOR_VIDEO            0x60
+#define SELECTOR_CODIGO_LVL0      0x0040
+#define SELECTOR_DATOS_LVL0       0x0050
+#define SELECTOR_CODIGO_LVL3      0x004B // 0x004B = 0000 0000 0100 1011. índice = 0000000001001 (9)  gdt/ldt = 0 dpl = 11 (3)
+#define SELECTOR_DATOS_LVL3       0x005B // 0x005B = 0000 0000 0101 1011. índice = 0000000001011 (11) gdt/ldt = 0 dpl = 11 (3)
+#define SELECTOR_VIDEO            0x0060
 
 
 /* Indices en la gdt */

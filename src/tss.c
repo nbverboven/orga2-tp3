@@ -62,7 +62,7 @@ void tss_inicializar_idle()
 	tss_idle.ds     = SELECTOR_DATOS_LVL0;
 	tss_idle.es     = SELECTOR_DATOS_LVL0;
 	tss_idle.gs     = SELECTOR_DATOS_LVL0;
-	tss_idle.fs     = SELECTOR_VIDEO;
+	tss_idle.fs     = SELECTOR_DATOS_LVL0;
 	tss_idle.ss     = SELECTOR_DATOS_LVL0;
 
 	tss_idle.eax    = 0;
@@ -93,7 +93,7 @@ void tss_inicializar_zombie(unsigned int codigo_zombie, unsigned int jugador,
 		tss_zombie->ds     = SELECTOR_DATOS_LVL3;
 		tss_zombie->es     = SELECTOR_DATOS_LVL3;
 		tss_zombie->gs     = SELECTOR_DATOS_LVL3;
-		tss_zombie->fs     = SELECTOR_VIDEO;
+		tss_zombie->fs     = SELECTOR_DATOS_LVL3;
 		tss_zombie->ss     = SELECTOR_DATOS_LVL3;
 		tss_zombie->esp0   = mmu_proxima_pagina_fisica_libre() + 0x1000;
 		tss_zombie->ss0    = SELECTOR_DATOS_LVL0;
