@@ -96,7 +96,7 @@ gdt_entry gdt[GDT_COUNT] = {
 
     /* Dato Nivel 0 */
     [GDT_IDX_DATO_VID_LVL_0_DESC] = (gdt_entry) {
-        (unsigned short)    0x8F9F,         /* limit[0:15]  */
+        (unsigned short)    0x9F3F,         /* limit[0:15]  */
         (unsigned short)    0x8000,         /* base[0:15]   */
         (unsigned char)     0x0B,           /* base[23:16]  */
         (unsigned char)     0x02,           /* type         */

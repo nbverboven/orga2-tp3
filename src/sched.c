@@ -164,7 +164,6 @@ void sched_lanzar_zombie(unsigned int jugador)
 	{
 		++i;
 	}
-
 	if ( i < CANT_ZOMBIS )
 	{
 
@@ -175,11 +174,12 @@ void sched_lanzar_zombie(unsigned int jugador)
 			tareas[i].z_posicion_y = infoJuego.jugador_A.posicion_y;
 			tss_inicializar_zombie( sched_dame_codigo(infoJuego.jugador_A.proximo_zombie_a_lanzar, JUGADOR_A), 
 								    JUGADOR_A, tareas[i].z_posicion_x, tareas[i].z_posicion_y );
-			// ltr(tareas[i].selector_tss);
-			// breakpoint();
 			infoJuego.jugador_A.zombies_lanzados += 1;
 			infoJuego.jugador_A.zombies_restantes -= 1;
 			tareas[i].esta_activa = 1;
+
+			print( infoJuego.zombies_disponibles[tareas[i].z_tipo], tareas[i].z_posicion_x+1, 
+				   tareas[i].z_posicion_y+1, C_FG_WHITE | C_BG_RED );
 		}
 		else
 		{
@@ -191,6 +191,9 @@ void sched_lanzar_zombie(unsigned int jugador)
 			infoJuego.jugador_B.zombies_lanzados += 1;
 			infoJuego.jugador_B.zombies_restantes -= 1;
 			tareas[i].esta_activa = 1;
+
+			print( infoJuego.zombies_disponibles[tareas[i].z_tipo], tareas[i].z_posicion_x+1, 
+				   tareas[i].z_posicion_y+1, C_FG_WHITE | C_BG_BLUE );
 		}
 	}
 }
@@ -302,15 +305,7 @@ void sched_handler_teclado(unsigned int tecla)
 
 		// RShift
 		case 0x36:
-			asd = (const char*) "RShift";
-			attr = ( C_FG_LIGHT_MAGENTA | C_BG_BLACK );
-			print( asd, 18, 0, attr );
-			break;
-
-		case 0xB6:
-			asd = (const char*) "RShift";
-			attr = ( C_FG_BLACK | C_BG_BLACK );
-			print( asd, 18, 0, attr );
+			sched_lanzar_zombie(JUGADOR_B);
 			break;
 
 		/************** Fin teclas jugador B **************/
@@ -353,7 +348,6 @@ void sched_ejecutar_orden_66(direccion d)
 
 	print( "x", actual->z_posicion_x+1, actual->z_posicion_y+1, C_FG_LIGHT_GREY | C_BG_GREEN );
 
-	//tss* estado_z = sched_dame_tss( actual->selector_tss ); 
 	unsigned int CR3 = rcr3();
 	unsigned int codigo_z = sched_dame_codigo( actual->z_tipo, infoJuego.jugador_de_turno );
 
@@ -387,12 +381,12 @@ void sched_ejecutar_orden_66(direccion d)
 	if ( !j )
 	{
 		print( infoJuego.zombies_disponibles[actual->z_tipo], actual->z_posicion_x+1, 
-			   actual->z_posicion_y+1, C_FG_WHITE | C_BG_BLUE );
+			   actual->z_posicion_y+1, C_FG_WHITE | C_BG_RED );
 	}
 	else
 	{
 		print( infoJuego.zombies_disponibles[actual->z_tipo], actual->z_posicion_x+1, 
-			   actual->z_posicion_y+1, C_FG_WHITE | C_BG_RED );
+			   actual->z_posicion_y+1, C_FG_WHITE | C_BG_BLUE );
 	}
 }
 

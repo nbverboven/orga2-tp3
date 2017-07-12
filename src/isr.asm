@@ -133,7 +133,7 @@ _isr32:
 	call proximo_reloj
 	call sched_proximo_indice
 
-	cmp ax, [sched_tarea_selector] ; Veo de no saltr a la misma tarea
+	cmp ax, 0
 	je .fin
 
 	mov [sched_tarea_selector], ax
@@ -175,7 +175,7 @@ _isr33:
 %define ADE 0x83D
 %define ATR 0x732
 
-global _isr102
+global _isr102 ; int 0x66
 _isr102:
 	pushad
 	pushfd
@@ -185,11 +185,10 @@ _isr102:
 	call sched_ejecutar_orden_66
 	add esp, 4
 
-
 	mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. índice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
 	mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle
+	; xchg bx, bx
 	jmp far [sched_tarea_offset]
-
 
 	popfd
 	popad
