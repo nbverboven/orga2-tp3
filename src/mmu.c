@@ -70,47 +70,7 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int jugador,
 
 	/********************* Fin identity mapping ***********************/
 
-
-	// Mapeo las páginas de la tarea
-	map_tile (*mapa)[SIZE_W] = (map_tile (*)[SIZE_W]) INICIO_MAPA;
-	
-	unsigned int posicion_en_mapa = (unsigned int) &( mapa [posicion_en_y]                   [posicion_en_x]             );
-	unsigned int adelante =         (unsigned int) &( mapa [posicion_en_y]                   [posicion_en_x+1-2*jugador] );
-	unsigned int adelante_der =     (unsigned int) &( mapa [(posicion_en_y+1+42*jugador)%44] [posicion_en_x+1-2*jugador] );
-	unsigned int adelante_izq =     (unsigned int) &( mapa [(posicion_en_y+43+2*jugador)%44] [posicion_en_x+1-2*jugador] );
-	unsigned int der =              (unsigned int) &( mapa [(posicion_en_y+1+42*jugador)%44] [posicion_en_x]             );
-	unsigned int izq =              (unsigned int) &( mapa [(posicion_en_y+43+2*jugador)%44] [posicion_en_x]             );
-	unsigned int atras =            (unsigned int) &( mapa [posicion_en_y]                   [posicion_en_x-1+2*jugador] );
-	unsigned int atras_izq =        (unsigned int) &( mapa [(posicion_en_y+43+2*jugador)%44] [posicion_en_x-1+2*jugador] );
-	unsigned int atras_der =        (unsigned int) &( mapa [(posicion_en_y+1+42*jugador)%44] [posicion_en_x-1+2*jugador] );
-
-	mmu_mapear_pagina( DIR_VIRTUAL_MAPA,        (unsigned int) page_directory, posicion_en_mapa, 1, 1 );
-	mmu_mapear_pagina( DIR_VIRTUAL_MAPA+0x1000, (unsigned int) page_directory, adelante,         1, 1 );
-	mmu_mapear_pagina( DIR_VIRTUAL_MAPA+0x2000, (unsigned int) page_directory, adelante_der,     1, 1 );
-	mmu_mapear_pagina( DIR_VIRTUAL_MAPA+0x3000, (unsigned int) page_directory, adelante_izq,     1, 1 );
-	mmu_mapear_pagina( DIR_VIRTUAL_MAPA+0x4000, (unsigned int) page_directory, der,              1, 1 );
-	mmu_mapear_pagina( DIR_VIRTUAL_MAPA+0x5000, (unsigned int) page_directory, izq,              1, 1 );
-	mmu_mapear_pagina( DIR_VIRTUAL_MAPA+0x6000, (unsigned int) page_directory, atras,            1, 1 );
-	mmu_mapear_pagina( DIR_VIRTUAL_MAPA+0x7000, (unsigned int) page_directory, atras_izq,        1, 1 );
-	mmu_mapear_pagina( DIR_VIRTUAL_MAPA+0x8000, (unsigned int) page_directory, atras_der,        1, 1 );
-
-
-	// Copio el código de la tarea a la ubicación en el mapa
-	char* src = (char*) codigo_tarea;
-	char* dst = (char*) posicion_en_mapa;
-
-
-	// Mapeo la página donde quiero copiar el código en el directorio del kernel
-	mmu_mapear_pagina( posicion_en_mapa, PAGE_DIRECTORY_KERNEL, posicion_en_mapa, 1, 0 );
-
-	while ( (unsigned int) (src) < codigo_tarea+0x1000 )
-	{
-		*dst = *src;
-		dst += 0x1;
-		src += 0x1;
-	}
-
-	mmu_desmapear_pagina( posicion_en_mapa, PAGE_DIRECTORY_KERNEL );
+	mmu_mapear_paginas_zombie(codigo_tarea, jugador, (unsigned int) page_directory, posicion_en_x, posicion_en_y);
 
 	return page_directory;
 }
@@ -153,8 +113,8 @@ void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisi
 
 void mmu_desmapear_pagina(unsigned int virtual, unsigned int cr3)
 {
-  unsigned int indice_pd = virtual >> 22;                // Me quedo con los bits 22-31
-  unsigned int indice_pt = (virtual & 0x003FF000) >> 12; // Me quedo con los bits 12-21
+	unsigned int indice_pd = virtual >> 22;                // Me quedo con los bits 22-31
+	unsigned int indice_pt = (virtual & 0x003FF000) >> 12; // Me quedo con los bits 12-21
 
 	pd_entry* page_directory = (pd_entry*) cr3;
 	pt_entry* page_table = (pt_entry*) ( page_directory[indice_pd].page_table_address << 12 );
