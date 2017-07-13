@@ -170,7 +170,7 @@ void sched_lanzar_zombie(unsigned int jugador)
 		if ( !jugador )
 		{
 			tareas[i].z_tipo = infoJuego.jugador_A.proximo_zombie_a_lanzar;
-			tareas[i].z_posicion_x = 1;
+			tareas[i].z_posicion_x = 0;
 			tareas[i].z_posicion_y = infoJuego.jugador_A.posicion_y;
 			tss_inicializar_zombie( sched_dame_codigo(infoJuego.jugador_A.proximo_zombie_a_lanzar, JUGADOR_A), 
 								    JUGADOR_A, tareas[i].z_posicion_x, tareas[i].z_posicion_y );
@@ -184,7 +184,7 @@ void sched_lanzar_zombie(unsigned int jugador)
 		else
 		{
 			tareas[i].z_tipo = infoJuego.jugador_B.proximo_zombie_a_lanzar;
-			tareas[i].z_posicion_x = 42;
+			tareas[i].z_posicion_x = 77;
 			tareas[i].z_posicion_y = infoJuego.jugador_B.posicion_y;
 			tss_inicializar_zombie( sched_dame_codigo(infoJuego.jugador_B.proximo_zombie_a_lanzar, JUGADOR_B), 
 								    JUGADOR_B, tareas[i].z_posicion_x, tareas[i].z_posicion_y );
