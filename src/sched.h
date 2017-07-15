@@ -38,6 +38,7 @@ typedef struct str_task_info {
 	zombie_type    z_tipo;
 	unsigned short z_posicion_x;
 	unsigned short z_posicion_y;
+	unsigned char  z_reloj;
 } __attribute__((__packed__)) task_info;
 
 

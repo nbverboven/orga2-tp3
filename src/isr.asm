@@ -154,15 +154,15 @@ _isr33:
 	pushad
 	pushfd
 
-	call fin_intr_pic1
-
 	xor eax, eax
 	in al, 0x60
+	
 	push eax
-
 	call sched_handler_teclado
+	add esp, 4
 
-	pop eax
+	call fin_intr_pic1
+
 	popfd
 	popad
 	iret
@@ -183,11 +183,9 @@ _isr102:
 	push eax
 	call sched_ejecutar_orden_66
 	add esp, 4
-	call fin_intr_pic1
 
 	mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. índice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
 	mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle
-	; xchg bx, bx
 	jmp far [sched_tarea_offset]
 
 	popfd

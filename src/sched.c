@@ -163,6 +163,7 @@ void sched_lanzar_zombie(unsigned int jugador)
 	{
 		++i;
 	}
+	
 	if ( i < CANT_ZOMBIS )
 	{
 
@@ -176,6 +177,7 @@ void sched_lanzar_zombie(unsigned int jugador)
 			infoJuego.jugador_A.zombies_lanzados += 1;
 			infoJuego.jugador_A.zombies_restantes -= 1;
 			tareas[i].esta_activa = 1;
+			tareas[i].z_reloj = 0;
 
 			print( infoJuego.zombies_disponibles[tareas[i].z_tipo], tareas[i].z_posicion_x+1, 
 				   tareas[i].z_posicion_y+1, C_FG_WHITE | C_BG_RED );
@@ -190,6 +192,7 @@ void sched_lanzar_zombie(unsigned int jugador)
 			infoJuego.jugador_B.zombies_lanzados += 1;
 			infoJuego.jugador_B.zombies_restantes -= 1;
 			tareas[i].esta_activa = 1;
+			tareas[i].z_reloj = 0;
 
 			print( infoJuego.zombies_disponibles[tareas[i].z_tipo], tareas[i].z_posicion_x+1, 
 				   tareas[i].z_posicion_y+1, C_FG_WHITE | C_BG_BLUE );
@@ -348,33 +351,31 @@ void sched_ejecutar_orden_66(direccion d)
 	print( "x", actual->z_posicion_x+1, actual->z_posicion_y+1, C_FG_LIGHT_GREY | C_BG_GREEN );
 
 	unsigned int CR3 = rcr3();
-	unsigned int codigo_z = sched_dame_codigo( actual->z_tipo, infoJuego.jugador_de_turno );
 
 	switch ( d )
 	{
 		case IZQ:
 			actual->z_posicion_y = ((actual->z_posicion_y)+43+2*j)%44;
 			mmu_desmapear_paginas_zombie( CR3 );
-			mmu_mapear_paginas_zombie( codigo_z, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
+			mmu_mapear_paginas_zombie( 0x08004000, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
 			break;
 
 		case DER:
 			actual->z_posicion_y = ((actual->z_posicion_y)+1+42*j)%44;
 			mmu_desmapear_paginas_zombie( CR3 );
-			mmu_mapear_paginas_zombie( codigo_z, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
+			mmu_mapear_paginas_zombie( 0x08005000, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
 			break;
 
 		case ADE:
 			actual->z_posicion_x = (actual->z_posicion_x)+1-2*j;
 			mmu_desmapear_paginas_zombie( CR3 );
-			mmu_mapear_paginas_zombie( codigo_z, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
-// breakpoint();
+			mmu_mapear_paginas_zombie( 0x08006000, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
 			break;
 
 		case ATR:
 			actual->z_posicion_x = (actual->z_posicion_x)-1+2*j;
 			mmu_desmapear_paginas_zombie( CR3 );
-			mmu_mapear_paginas_zombie( codigo_z, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
+			mmu_mapear_paginas_zombie( 0x08001000, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
 			break;
 	}
 
