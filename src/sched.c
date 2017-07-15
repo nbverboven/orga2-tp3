@@ -368,6 +368,7 @@ void sched_ejecutar_orden_66(direccion d)
 			actual->z_posicion_x = (actual->z_posicion_x)+1-2*j;
 			mmu_desmapear_paginas_zombie( CR3 );
 			mmu_mapear_paginas_zombie( codigo_z, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
+// breakpoint();
 			break;
 
 		case ATR:

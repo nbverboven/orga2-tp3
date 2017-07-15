@@ -179,11 +179,11 @@ global _isr102 ; int 0x66
 _isr102:
 	pushad
 	pushfd
-
-	call fin_intr_pic1
+	
 	push eax
 	call sched_ejecutar_orden_66
 	add esp, 4
+	call fin_intr_pic1
 
 	mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. índice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
 	mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle

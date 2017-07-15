@@ -15,8 +15,8 @@ tss tss_zombisA[CANT_ZOMBIS];
 tss tss_zombisB[CANT_ZOMBIS];
 
 // Índices en la gdt del descriptor de la proxima tss libre para cada jugador
-unsigned int proxima_tss_libre_A;
-unsigned int proxima_tss_libre_B;
+// unsigned int proxima_tss_libre_A;
+// unsigned int proxima_tss_libre_B;
 
 
 void tss_inicializar()

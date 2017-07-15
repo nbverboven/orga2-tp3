@@ -164,13 +164,13 @@ void mmu_mapear_paginas_zombie(unsigned int codigo_tarea, unsigned int jugador, 
 	mmu_mapear_pagina( DIR_VIRTUAL_MAPA+0x7000, cr3, atras_izq,        1, 1 );
 	mmu_mapear_pagina( DIR_VIRTUAL_MAPA+0x8000, cr3, atras_der,        1, 1 );
 
-
 	// Copio el código de la tarea a la ubicación en el mapa
 	char* src = (char*) codigo_tarea;
 	char* dst = (char*) posicion_en_mapa;
 
 	// Mapeo la página donde quiero copiar el código en el directorio de la tarea, pero con privilegio de supervisor
 	mmu_mapear_pagina( posicion_en_mapa, PAGE_DIRECTORY_KERNEL, posicion_en_mapa, 1, 0 );
+	mmu_mapear_pagina( posicion_en_mapa, cr3, posicion_en_mapa, 1, 0 );
 
 	while ( (unsigned int) (src) < codigo_tarea+0x1000 )
 	{
@@ -180,4 +180,5 @@ void mmu_mapear_paginas_zombie(unsigned int codigo_tarea, unsigned int jugador, 
 	}
 
 	mmu_desmapear_pagina( posicion_en_mapa, PAGE_DIRECTORY_KERNEL );
+	mmu_desmapear_pagina( posicion_en_mapa, cr3 );
 }
