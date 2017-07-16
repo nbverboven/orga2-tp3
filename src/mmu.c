@@ -171,6 +171,19 @@ void mmu_mapear_paginas_zombie(unsigned int codigo_tarea, unsigned int jugador, 
 		char* dst = (char*) posicion_en_mapa;
 
 		// Mapeo la página donde quiero copiar el código en el directorio de la tarea, pero con privilegio de supervisor
+
+
+
+
+		/* 
+		   Puede paracer una cochinada (y probablemente lo sea), pero tiene una explicación. Esta función puede ser llamada
+		   desde dos posibles lugares: desde mmu_inicializar_dir_zombie o desde la rutina de atención de la syscall mover.
+		   En el primer caso, la tarea activa puede ser o el kernel o la tarea idle; en ambos, el mapa de memoria que se 
+		   utiliza es el del kernel, por lo que la única región mapeada son los primeros 4 MB. Lógicamente, para acceder a
+		   una dirección por fuera de ese rango debe mapearse y debe utilizarse un page directory acorde, que resulta ser el
+		   del kernel.
+		   La otra posibilidad es que la función sea llamada al momento de querer mover un zombie. 
+		*/
 		mmu_mapear_pagina( posicion_en_mapa, PAGE_DIRECTORY_KERNEL, posicion_en_mapa, 1, 0 );
 		mmu_mapear_pagina( posicion_en_mapa, cr3, posicion_en_mapa, 1, 0 );
 

@@ -357,18 +357,24 @@ void sched_ejecutar_orden_66(direccion d)
 		case IZQ:
 			actual->z_posicion_y = ((actual->z_posicion_y)+43+2*j)%44;
 			mmu_desmapear_paginas_zombie( CR3 );
+			// lcr2(actual->z_posicion_x);
+			// breakpoint();
 			mmu_mapear_paginas_zombie( 0x08004000, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
 			break;
 
 		case DER:
 			actual->z_posicion_y = ((actual->z_posicion_y)+1+42*j)%44;
 			mmu_desmapear_paginas_zombie( CR3 );
+			// lcr2(actual->z_posicion_x);
+			// breakpoint();
 			mmu_mapear_paginas_zombie( 0x08005000, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
 			break;
 
 		case ADE:
 			actual->z_posicion_x = (actual->z_posicion_x)+1-2*j;
 			mmu_desmapear_paginas_zombie( CR3 );
+			// lcr2(actual->z_posicion_x);
+			// breakpoint();
 			mmu_mapear_paginas_zombie( 0x08006000, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
 			break;
 
