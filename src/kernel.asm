@@ -23,44 +23,6 @@ extern resetear_pic
 extern habilitar_pic
 extern deshabilitar_pic
 
-
-%macro pintar_pantalla 0
-	imprimir_texto_mp pintar_pantalla_msg, 4000, 0x22, 0, 0
-
-	mov ecx, 44
-	mov ecx, ecx
-
-	pintarBarras:
-		imprimir_texto_mp pintar_pantalla_msg, 1, 01000100b, ecx, 0
-		imprimir_texto_mp pintar_pantalla_msg, 1, 00010001b, ecx, 79 
-	loop pintarBarras
-
-	imprimir_texto_mp pintar_pantalla_msg, 80, 0x00, 0, 0
-	imprimir_texto_mp pintar_pantalla_msg, 400, 0x00, 45, 0
-
-	imprimir_texto_mp pintar_pantalla_nros, pintar_pantalla_nros_len, 0x0F, 46, 5
-	imprimir_texto_mp pintar_pantalla_nros, pintar_pantalla_nros_len, 0x0F, 46, 60
-
-
-	mov ecx, 5
-	mov ecx, ecx
-
-	pintarCuadrados:
-		mov eax, ecx
-		add eax, 44
-		imprimir_texto_mp pintar_pantalla_msg, 6, 01000100b, eax, 34
-		imprimir_texto_mp pintar_pantalla_msg, 6, 00010001b, eax, 40
-	loop pintarCuadrados
-
-	imprimir_texto_mp pintar_pantalla_group_name, pintar_pantalla_group_name_len, 00000111b, 0, 63 
-	; mov eax, 9733
-	; push eax
-	; imprimir_texto_mp esp, 1, 0xBF, 0, 76 
-	; pop eax
-
-%endmacro
-
-
 ;; Saltear seccion de datos
 jmp start
 
@@ -75,6 +37,35 @@ jmp start
 ;;
 ;; Seccion de datos.
 ;; -------------------------------------------------------------------------- ;;
+%macro pintar_pantalla 0
+	mov ecx, 44
+	mov ecx, ecx
+
+	pintarBarras:
+		imprimir_texto_mp pintar_pantalla_msg, 1, 01000100b, ecx, 0
+		imprimir_texto_mp pintar_pantalla_msg, 1, 00010001b, ecx, 79 
+	loop pintarBarras
+
+	imprimir_texto_mp pintar_pantalla_msg, 80, 0x00, 0, 0
+	imprimir_texto_mp pintar_pantalla_msg, 400, 0x00, 45, 0
+
+	imprimir_texto_mp pintar_pantalla_nros, pintar_pantalla_nros_len, 0x0F, 46, 5
+	imprimir_texto_mp pintar_pantalla_nros, pintar_pantalla_nros_len, 0x0F, 46, 60
+
+	mov ecx, 5
+	mov ecx, ecx
+
+	pintarCuadrados:
+		mov eax, ecx
+		add eax, 44
+		imprimir_texto_mp pintar_pantalla_msg, 6, 01000100b, eax, 34
+		imprimir_texto_mp pintar_pantalla_msg, 6, 00010001b, eax, 40
+	loop pintarCuadrados
+
+	imprimir_texto_mp pintar_pantalla_group_name, pintar_pantalla_group_name_len, 00000111b, 0, 63
+%endmacro
+
+
 iniciando_empty_msg db     ' '
 iniciando_mr_msg db     'Iniciando kernel (Modo Real)...'
 iniciando_mr_len equ    $ - iniciando_mr_msg
@@ -98,6 +89,7 @@ barra_len equ $ - 1
 ;; Punto de entrada del kernel.
 BITS 16
 start:
+
 	; Deshabilitar interrupciones
 	cli
 
@@ -128,8 +120,6 @@ start:
 BITS 32
 modoprotegido:
 
-;xchg bx,bx ;breakpoint
-
 	; Establecer selectores de segmentos
 	mov ax, SELECTOR_DATOS_LVL0 ; 10<<3 1010000b 0x50
 	mov ds, ax
@@ -148,6 +138,14 @@ modoprotegido:
 	imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
 	; Inicializar pantalla
+	xor ebx, ebx				
+
+limpiar_pantalla:
+	mov dword [fs:ebx], 0x20202020 ; pinto de verde
+	add ebx, 4
+	cmp ebx, 8000
+	jl limpiar_pantalla
+	
 	pintar_pantalla
 
 	; Inicializar el manejador de memoria

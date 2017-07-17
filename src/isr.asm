@@ -114,6 +114,7 @@ _isr%1:
 ; Scheduler
 isrnumero:           dd 0x00000000
 isrClock:            db '|/-\'
+estoy_en_modo_debug: db 0
 
 
 ;;
