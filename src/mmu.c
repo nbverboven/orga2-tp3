@@ -57,7 +57,7 @@ int* mmu_inicializar_dir_zombi(unsigned int codigo_tarea, unsigned int jugador,
 	page_directory[0] = (int) (tabla_identity_map) + 0x5;
 
 	for ( int i = 1; i < 1024; ++i )
-	{ 
+	{
 		page_directory[i] = 0;
 	}
 

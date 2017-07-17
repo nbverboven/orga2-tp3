@@ -317,9 +317,20 @@ void sched_handler_teclado(unsigned int tecla)
 
 		// Y
 		case 0x15:
-			asd = (const char*) "Y";
+			asd = (const char*) "y";
 			attr = ( C_FG_LIGHT_BROWN | C_BG_BLACK );
 			print( asd, 25, 0, attr );
+
+			if(infoJuego.modo_debug_on == 0)
+			{
+				//TODO guardar pantalla
+				infoJuego.modo_debug_on = 1;
+
+			}else{
+				//TODO volver a colocar la pantalla guardada
+				infoJuego.modo_debug_on = 0;
+			}
+
 			break;
 
 		case 0x95:
@@ -443,4 +454,10 @@ unsigned int sched_dame_codigo(zombie_type tipo, unsigned char j)
 	}
 
 	return res;
+}
+
+
+unsigned char is_mode_debug_on()
+{
+	return infoJuego.modo_debug_on;
 }
