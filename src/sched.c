@@ -14,15 +14,13 @@ info_juego infoJuego;
 void sched_inicializar()
 {
 	// Inicializo toodas las estructuras del scheduler
-	infoJuego.jugador_A.zombies_lanzados = 0;
-	infoJuego.jugador_A.zombies_restantes = 13;
+	infoJuego.jugador_A.zombies_restantes = ZOMBIES_A_LANZAR;
 	infoJuego.jugador_A.posicion_x = 0; // Posición inicial (relativa al mapa, no a las dimensiones de la pantalla)
 	infoJuego.jugador_A.posicion_y = 21;
 	infoJuego.jugador_A.proximo_zombie_a_lanzar = guerrero;
 	infoJuego.jugador_A.puntaje_actual = 0;
 
-	infoJuego.jugador_B.zombies_lanzados = 0;
-	infoJuego.jugador_B.zombies_restantes = 13;
+	infoJuego.jugador_B.zombies_restantes = ZOMBIES_A_LANZAR;
 	infoJuego.jugador_B.posicion_x = 79;
 	infoJuego.jugador_B.posicion_y = 21;
 	infoJuego.jugador_B.proximo_zombie_a_lanzar = guerrero;
@@ -159,5 +157,16 @@ void sched_desalojar_tarea_actual()
 		x = infoJuego.tareasB[infoJuego.tarea_actual_B].z_posicion_x;
 		y = infoJuego.tareasB[infoJuego.tarea_actual_B].z_posicion_y;
 		print( "X", x+1, y+1, C_FG_BLUE | C_BG_GREEN );
+	}
+
+	// Asigno puntos si corresponde
+	if ( x == 0 )
+	{
+		infoJuego.jugador_B.puntaje_actual += 1;
+	}
+
+	if ( x == 77 )
+	{
+		infoJuego.jugador_A.puntaje_actual += 1;
 	}
 }

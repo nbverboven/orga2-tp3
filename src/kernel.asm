@@ -48,8 +48,8 @@ extern deshabilitar_pic
 	pintarCuadrados:
 		mov eax, ecx
 		add eax, 44
-		imprimir_texto_mp pintar_pantalla_msg, 5, 01000100b, eax, 34
-		imprimir_texto_mp pintar_pantalla_msg, 5, 00010001b, eax, 39
+		imprimir_texto_mp pintar_pantalla_msg, 6, 01000100b, eax, 34
+		imprimir_texto_mp pintar_pantalla_msg, 6, 00010001b, eax, 40
 	loop pintarCuadrados
 
 	imprimir_texto_mp pintar_pantalla_group_name, pintar_pantalla_group_name_len, 00000111b, 0, 63 

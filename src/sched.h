@@ -20,7 +20,6 @@ void sched_desalojar_tarea_actual();
 
 
 typedef struct str_jugador {
-	unsigned short zombies_lanzados;
 	unsigned short zombies_restantes;
 	unsigned short posicion_x;
 	unsigned short posicion_y;

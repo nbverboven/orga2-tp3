@@ -82,6 +82,9 @@ extern sched_desalojar_tarea_actual
 extern game_move_current_zombi
 extern game_jugador_mover
 
+;; Screen
+extern actualizar_info_pantalla
+
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -112,6 +115,7 @@ _isr%1:
 isrnumero:           dd 0x00000000
 isrClock:            db '|/-\'
 
+
 ;;
 ;; Rutina de atención de las EXCEPCIONES
 ;; -------------------------------------------------------------------------- ;;
@@ -135,6 +139,7 @@ ISR 17
 ISR 18
 ISR 19
 
+
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
@@ -145,9 +150,13 @@ _isr32:
 
 	call fin_intr_pic1
 	call proximo_reloj
+	call actualizar_info_pantalla
 	call sched_proximo_indice
 
 	cmp ax, 0
+	je .fin
+
+	cmp ax, [sched_tarea_selector]
 	je .fin
 
 	mov [sched_tarea_selector], ax
@@ -157,7 +166,6 @@ _isr32:
 		popfd
 		popad
 		iret
-
 
 
 ;;

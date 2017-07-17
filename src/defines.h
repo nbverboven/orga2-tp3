@@ -20,6 +20,7 @@
 /* Misc */
 /* -------------------------------------------------------------------------- */
 #define CANT_ZOMBIS             8
+#define ZOMBIES_A_LANZAR        11
 
 #define SIZE_W                  78
 #define SIZE_H                  44

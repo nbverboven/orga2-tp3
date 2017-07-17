@@ -8,10 +8,10 @@
 #define __GAME_H__
 
 #include "defines.h"
-#include "screen.h"
 #include "mmu.h"
 #include "tss.h"
 #include "sched.h"
+#include "screen.h"
 
 typedef enum direccion_e { IZQ = 0xAAA, DER = 0x441, ADE = 0x83D, ATR = 0x732 } direccion;
 

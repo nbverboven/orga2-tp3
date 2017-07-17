@@ -142,60 +142,62 @@ void game_jugador_mover(unsigned int value)
 
 void game_lanzar_zombi(unsigned int jugador)
 {
-	task_info* tareas;
-	int i = 0;
-
-	// Obtengo el selector del primer tss libre para el jugador
-	unsigned short selec = sched_proxima_tss_libre(jugador);
-
-	// Busco en la lista de tareas del jugador correspondiente
-	if ( !jugador )
+	// Primero que nada, veo si el jugador tiene zombies para lanzar
+	if ( (!jugador && infoJuego.jugador_A.zombies_restantes > 0) || (jugador && infoJuego.jugador_B.zombies_restantes > 0) )
 	{
-		tareas = (task_info*) &infoJuego.tareasA;
-	}
-	else
-	{
-		tareas = (task_info*) &infoJuego.tareasB;
-	}
+		task_info* tareas;
+		int i = 0;
 
-	while ( i < CANT_ZOMBIS && tareas[i].esta_activa )
-	{
-		++i;
-	}
-	
-	if ( i < CANT_ZOMBIS )
-	{
+		// Obtengo el selector del primer tss libre para el jugador
+		unsigned short selec = sched_proxima_tss_libre(jugador);
 
+		// Busco en la lista de tareas del jugador correspondiente
 		if ( !jugador )
 		{
-			tareas[i].z_tipo = infoJuego.jugador_A.proximo_zombie_a_lanzar;
-			tareas[i].z_posicion_x = 1;
-			tareas[i].z_posicion_y = infoJuego.jugador_A.posicion_y;
-			tss_inicializar_zombie( game_dame_codigo(infoJuego.jugador_A.proximo_zombie_a_lanzar, JUGADOR_A), 
-								    JUGADOR_A, selec, tareas[i].z_posicion_x, tareas[i].z_posicion_y );
-			infoJuego.jugador_A.zombies_lanzados += 1;
-			infoJuego.jugador_A.zombies_restantes -= 1;
-			tareas[i].esta_activa = 1;
-			tareas[i].z_reloj = 0;
-
-			print( infoJuego.zombies_disponibles[tareas[i].z_tipo], tareas[i].z_posicion_x+1, 
-				   tareas[i].z_posicion_y+1, C_FG_WHITE | C_BG_RED );
+			tareas = (task_info*) &infoJuego.tareasA;
 		}
 		else
 		{
-			tareas[i].z_tipo = infoJuego.jugador_B.proximo_zombie_a_lanzar;
-			tareas[i].z_posicion_x = 76;
-			tareas[i].z_posicion_y = infoJuego.jugador_B.posicion_y;
-			tss_inicializar_zombie( game_dame_codigo(infoJuego.jugador_B.proximo_zombie_a_lanzar, JUGADOR_B), 
-								    JUGADOR_B, selec, tareas[i].z_posicion_x, tareas[i].z_posicion_y );
-			infoJuego.jugador_B.zombies_lanzados += 1;
-			infoJuego.jugador_B.zombies_restantes -= 1;
-			tareas[i].esta_activa = 1;
-			tareas[i].z_reloj = 0;
-
-			print( infoJuego.zombies_disponibles[tareas[i].z_tipo], tareas[i].z_posicion_x+1, 
-				   tareas[i].z_posicion_y+1, C_FG_WHITE | C_BG_BLUE );
+			tareas = (task_info*) &infoJuego.tareasB;
 		}
+
+		while ( i < CANT_ZOMBIS && tareas[i].esta_activa )
+		{
+			++i;
+		}
+		
+		if ( i < CANT_ZOMBIS )
+		{
+
+			if ( !jugador )
+			{
+				tareas[i].z_tipo = infoJuego.jugador_A.proximo_zombie_a_lanzar;
+				tareas[i].z_posicion_x = 1;
+				tareas[i].z_posicion_y = infoJuego.jugador_A.posicion_y;
+				tss_inicializar_zombie( game_dame_codigo(infoJuego.jugador_A.proximo_zombie_a_lanzar, JUGADOR_A), 
+									    JUGADOR_A, selec, tareas[i].z_posicion_x, tareas[i].z_posicion_y );
+				infoJuego.jugador_A.zombies_restantes -= 1;
+				tareas[i].esta_activa = 1;
+				tareas[i].z_reloj = 0;
+
+				print( infoJuego.zombies_disponibles[tareas[i].z_tipo], tareas[i].z_posicion_x+1, 
+					   tareas[i].z_posicion_y+1, C_FG_WHITE | C_BG_RED );
+			}
+			else
+			{
+				tareas[i].z_tipo = infoJuego.jugador_B.proximo_zombie_a_lanzar;
+				tareas[i].z_posicion_x = 76;
+				tareas[i].z_posicion_y = infoJuego.jugador_B.posicion_y;
+				tss_inicializar_zombie( game_dame_codigo(infoJuego.jugador_B.proximo_zombie_a_lanzar, JUGADOR_B), 
+									    JUGADOR_B, selec, tareas[i].z_posicion_x, tareas[i].z_posicion_y );
+				infoJuego.jugador_B.zombies_restantes -= 1;
+				tareas[i].esta_activa = 1;
+				tareas[i].z_reloj = 0;
+
+				print( infoJuego.zombies_disponibles[tareas[i].z_tipo], tareas[i].z_posicion_x+1, 
+					   tareas[i].z_posicion_y+1, C_FG_WHITE | C_BG_BLUE );
+			}
+		}	
 	}
 }
 
@@ -302,4 +304,3 @@ unsigned int game_dame_codigo(zombie_type tipo, unsigned char j)
 
 	return res;
 }
-
