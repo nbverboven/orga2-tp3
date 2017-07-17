@@ -14,10 +14,6 @@ tss tss_idle;
 tss tss_zombisA[CANT_ZOMBIS];
 tss tss_zombisB[CANT_ZOMBIS];
 
-// Índices en la gdt del descriptor de la proxima tss libre para cada jugador
-// unsigned int proxima_tss_libre_A;
-// unsigned int proxima_tss_libre_B;
-
 
 void tss_inicializar()
 {
@@ -72,16 +68,13 @@ void tss_inicializar_idle()
 }
 
 
-void tss_inicializar_zombie(unsigned int codigo_zombie, unsigned int jugador,
+void tss_inicializar_zombie(unsigned int codigo_zombie, unsigned int jugador, unsigned short selector,
                             unsigned int posicion_x, unsigned int posicion_y)
 {
-	// Obtengo el selector del primer tss libre para el jugador
-	unsigned short i = sched_proximo_indice_libre(jugador);
-
 	// Me fijo que ese tss no sea el descriptor nulo (es decir, que efectivamente haya un tss libre)
-	if ( i != 0 )
+	if ( selector != 0 )
 	{	
-		tss* tss_zombie = sched_dame_tss(i);
+		tss* tss_zombie = tss_obtener(selector);
 
 		// Inicializo el TSS de la tarea para el jugador correspondiente
 		tss_zombie->cr3    = (unsigned int) mmu_inicializar_dir_zombi(codigo_zombie, jugador, posicion_x, posicion_y);
@@ -103,4 +96,13 @@ void tss_inicializar_zombie(unsigned int codigo_zombie, unsigned int jugador,
 		tss_zombie->ecx    = 0;
 		tss_zombie->edx    = 0;
 	}
+}
+
+
+// Toma como argumento un selector de tss
+tss* tss_obtener(unsigned short selector)
+{
+	gdt_entry* aux = (gdt_entry*) &gdt[selector >> 3];
+	tss* res = (tss*) ((unsigned int) aux->base_0_15 | ((unsigned int) aux->base_23_16) << 16  | ((unsigned int) aux->base_31_24) << 24 );
+	return res;
 }

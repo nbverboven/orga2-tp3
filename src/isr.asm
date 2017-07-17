@@ -104,6 +104,14 @@ extern fin_intr_pic1
 extern sched_proximo_indice
 extern sched_handler_teclado
 extern sched_ejecutar_orden_66
+extern sched_desalojar_tarea_actual
+
+;; Game 
+extern game_move_current_zombi
+extern game_jugador_mover
+
+;; Screen
+extern actualizar_info_pantalla
 
 ;;
 ;; Definición de MACROS
@@ -112,10 +120,19 @@ extern sched_ejecutar_orden_66
 global _isr%1
 
 _isr%1:
+	pushad
+
 	mov eax, %1
 	imprimir_texto_mp  msg_int_%1, len_int_%1, 0x07, 0, 0
 
-	jmp $
+	call sched_desalojar_tarea_actual
+
+	mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. índice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
+	mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle
+	jmp far [sched_tarea_offset]
+
+	popad
+	iret
 
 %endmacro
 
@@ -152,6 +169,8 @@ _isr%1:
 ; Scheduler
 isrnumero:           dd 0x00000000
 isrClock:            db '|/-\'
+estoy_en_modo_debug: db 0
+
 
 ;;
 ;; Rutina de atención de las EXCEPCIONES
@@ -176,6 +195,7 @@ ISR 17
 ISR 18
 ISR 19
 
+
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
@@ -186,9 +206,13 @@ _isr32:
 
 	call fin_intr_pic1
 	call proximo_reloj
+	call actualizar_info_pantalla
 	call sched_proximo_indice
 
 	cmp ax, 0
+	je .fin
+
+	cmp ax, [sched_tarea_selector]
 	je .fin
 
 	mov [sched_tarea_selector], ax
@@ -198,7 +222,6 @@ _isr32:
 		popfd
 		popad
 		iret
-
 
 
 ;;
@@ -213,7 +236,7 @@ _isr33:
 	in al, 0x60
 	
 	push eax
-	call sched_handler_teclado
+	call game_jugador_mover
 	add esp, 4
 
 	call fin_intr_pic1
@@ -243,7 +266,8 @@ _isr102:
 		jmp .fin
 
 	.debug_off:
-		call sched_ejecutar_orden_66
+		call game_move_current_zombi
+		;call sched_ejecutar_orden_66
 		add esp, 4
 
 		mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. índice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
@@ -303,7 +327,7 @@ ventana_debug:
 	;popfd
 	;popad
 
-	xchg bx,bx ;breakpoint
+	;xchg bx,bx ;breakpoint
 
 	imprimir_texto_mp msg_debug_eax, 3, 0x70, 10, 26
 	imprimir_hexa eax, 8, 10, 30

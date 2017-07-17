@@ -14,6 +14,8 @@
 
 #include "colors.h"
 #include "defines.h"
+#include "sched.h"
+
 /* Estructura de para acceder a memoria de video */
 typedef struct ca_s {
     unsigned char c;
@@ -26,5 +28,7 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
 
 void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short attr);
 
+void actualizar_info_pantalla();
+void actualizar_relojes();
 
 #endif  /* !__SCREEN_H__ */

@@ -28,5 +28,5 @@ void task() {
     syscall_mover(ADE); //breakpoint();
     }
     
-//   while(1) { __asm __volatile("mov $2, %%eax":::"eax"); }
+  // while(1) { __asm __volatile("mov $2, %%eax":::"eax"); }
 }
