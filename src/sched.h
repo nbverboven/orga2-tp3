@@ -15,11 +15,8 @@ typedef enum zombie_type_e { guerrero = 0, mago = 1, clerigo = 2 } zombie_type;
 
 void sched_inicializar();
 unsigned short sched_proximo_indice();
-unsigned short sched_proximo_indice_libre(unsigned int);
-void sched_handler_teclado(unsigned int tecla);
-void sched_ejecutar_orden_66(direccion d);
-tss* sched_dame_tss(unsigned short selector);
-unsigned int sched_dame_codigo(zombie_type tipo, unsigned char j);
+unsigned short sched_proxima_tss_libre(unsigned int);
+void sched_desalojar_tarea_actual();
 
 
 typedef struct str_jugador {
@@ -45,14 +42,16 @@ typedef struct str_task_info {
 typedef struct str_info_juego {
 	unsigned char modo_debug_on;
 	const char*   zombies_disponibles[3];
+	unsigned char jugador_de_turno;
 	jugador       jugador_A;
 	jugador       jugador_B;
-	unsigned char jugador_de_turno;
 	unsigned char tarea_actual_A;
 	unsigned char tarea_actual_B;
 	task_info     tareasA[CANT_ZOMBIS];
 	task_info     tareasB[CANT_ZOMBIS];
 } __attribute__((__packed__)) info_juego;
 
+
+extern info_juego infoJuego;
 
 #endif	/* !__SCHED_H__ */

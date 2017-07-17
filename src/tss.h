@@ -56,7 +56,8 @@ typedef struct str_tss {
 
 void tss_inicializar();
 void tss_inicializar_idle();
-void tss_inicializar_zombie(unsigned int codigo_zombie, unsigned int jugador,
+void tss_inicializar_zombie(unsigned int codigo_zombie, unsigned int jugador, unsigned short selector,
                             unsigned int posicion_x, unsigned int posicion_y);
+tss* tss_obtener(unsigned short selector);
 
 #endif  /* !__TSS_H__ */

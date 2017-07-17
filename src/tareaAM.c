@@ -11,24 +11,21 @@
 
 void task() {
     /* Tarea */
-    while (1)
-    {
-        int i;
-        for(i=0;i<10;i++) {
-        syscall_mover(ADE); //breakpoint();
-        }
-        for(i=0;i<10;i++) {
-        syscall_mover(DER); //breakpoint();
-        }
-        for(i=0;i<10;i++) {
-        syscall_mover(ADE); //breakpoint();
-        }
-        for(i=0;i<10;i++) {
-        syscall_mover(IZQ); //breakpoint();
-        }
-        for(i=0;i<10;i++) {
-        syscall_mover(ADE); //breakpoint();
-        }
+    int i;
+    for(i=0;i<10;i++) {
+    syscall_mover(ADE); //breakpoint();
+    }
+    for(i=0;i<10;i++) {
+    syscall_mover(DER); //breakpoint();
+    }
+    for(i=0;i<10;i++) {
+    syscall_mover(ADE); //breakpoint();
+    }
+    for(i=0;i<10;i++) {
+    syscall_mover(IZQ); //breakpoint();
+    }
+    for(i=0;i<10;i++) {
+    syscall_mover(ADE); //breakpoint();
     }
     
   // while(1) { __asm __volatile("mov $2, %%eax":::"eax"); }

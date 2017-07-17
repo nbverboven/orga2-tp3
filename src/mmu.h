@@ -11,7 +11,6 @@
 #include "defines.h"
 #include "i386.h"
 #include "tss.h"
-#include "game.h"
 
 void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
