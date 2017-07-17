@@ -9,6 +9,42 @@
 
 unsigned char cositos[4] = {'|', '/', '-', '\\'};
 
+// Estructura auxiliar para almacenar la información de los registros
+// cuando se produce una excepción
+struct {
+	unsigned int   eax;
+	unsigned int   ebx;
+	unsigned int   ecx;
+	unsigned int   edx;
+	unsigned int   esi;
+	unsigned int   edi;
+	unsigned int   ebp;
+	unsigned int   esp;
+	unsigned int   eip;
+	unsigned short cs;
+	unsigned short ds;
+	unsigned short es;
+	unsigned short fs;
+	unsigned short gs;
+	unsigned short ss;
+	unsigned int   eflags;
+	unsigned int   cr0;
+	unsigned int   cr2;
+	unsigned int   cr3;
+	unsigned int   cr4;
+	unsigned int   stack1;
+	unsigned int   stack2;
+	unsigned int   stack3;
+	unsigned int   stack4;
+	unsigned int   stack5;
+} __attribute__((__packed__)) info_debug;
+
+// En esta variable voy a guardar la info de la pantalla
+// para no perderla cuando imprimo la pantalla de debug
+ca (*buffer_pantalla)[VIDEO_COLS];
+
+
+
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr)
 {
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
@@ -148,4 +184,118 @@ void actualizar_relojes()
 }
 
 
+void imprimir_pantalla_debug()
+{
+	// Guardo la pantalla actual
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+
+	for (int i = 0; i < 50; ++i)
+	{
+		for (int j = 0; j < 78; ++j)
+		{
+			buffer_pantalla[i][j] = p[i][j];
+		}
+	}
+
+	// Pinto la pantalla de debug
+	for (int i = 7; i < 43; ++i)
+	{
+		for (int j = 25; j < 55; ++j)
+		{
+			print( "a", j, i, C_FG_BLACK | C_BG_BLACK );
+		}
+	}
+
+	for (int i = 8; i < 42; ++i)
+	{
+		for (int j = 26; j < 54; ++j)
+		{
+			print( "a", j, i, C_FG_LIGHT_GREY | C_BG_LIGHT_GREY );
+		}
+	}
+
+	for (int i = 26; i < 54; ++i)
+	{
+		print( "a", i, 8, C_FG_BLUE | C_BG_BLUE );
+	}
+
+	const char* columna_1[16] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "ebp", "esp",
+	                             "eip", "cs", "ds", "es", "fs", "gs", "ss", "eflags"};
+
+	const char* screen_zombis[3] = {"Guerrero", "Mago", "Clerigo"};
+
+	print("Zombie", 26, 8, C_FG_WHITE | C_BG_BLUE);
+
+	// Imprimo qué tipo de zombie murió y a quién le pertenecía
+	if ( !infoJuego.jugador_de_turno ) 
+	{
+		print("A", 33, 8, C_FG_WHITE | C_BG_BLUE);
+		print(screen_zombis[infoJuego.tareasA[infoJuego.tarea_actual_A].z_tipo], 35, 8, C_FG_WHITE | C_BG_BLUE);
+	}
+	else
+	{
+		print("B", 33, 8, C_FG_WHITE | C_BG_BLUE);
+		print(screen_zombis[infoJuego.tareasB[infoJuego.tarea_actual_B].z_tipo], 35, 8, C_FG_WHITE | C_BG_BLUE);
+	}
+
+	// Imprimo los elementos de columna_1 en su lugar correcto en la pantalla
+	int k = 10;
+
+	for (int i = 0; i < 16; ++i)
+	{
+		print( columna_1[i], 27, k, C_FG_BLACK | C_BG_LIGHT_GREY );
+		k += 2;
+	}
+
+	print( "cr0", 41, 10, C_FG_BLACK | C_BG_LIGHT_GREY );
+	print( "cr2", 41, 12, C_FG_BLACK | C_BG_LIGHT_GREY );
+	print( "cr3", 41, 14, C_FG_BLACK | C_BG_LIGHT_GREY );
+	print( "cr4", 41, 16, C_FG_BLACK | C_BG_LIGHT_GREY );
+	print( "stack", 41, 27, C_FG_BLACK | C_BG_LIGHT_GREY );
+
+	// Imprimo la información de debug contenida en la estructura del mismo nombre
+	print_hex( info_debug.stack1, 8, 41, 29, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.stack2, 8, 41, 30, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.stack3, 8, 41, 31, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.stack4, 8, 41, 32, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.stack5, 8, 41, 33, C_FG_WHITE | C_BG_LIGHT_GREY );
+
+	print_hex( info_debug.eax, 8, 31, 10, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.ebx, 8, 31, 12, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.ecx, 8, 31, 14, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.edx, 8, 31, 16, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.esi, 8, 31, 18, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.edi, 8, 31, 20, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.ebp, 8, 31, 22, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.esp, 8, 31, 24, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.eip, 8, 31, 26, C_FG_WHITE | C_BG_LIGHT_GREY );
+
+	print_hex( info_debug.cs, 4, 31, 28, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.ds, 4, 31, 30, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.es, 4, 31, 32, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.fs, 4, 31, 34, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.gs, 4, 31, 36, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.ss, 4, 31, 38, C_FG_WHITE | C_BG_LIGHT_GREY );
+
+	print_hex( info_debug.eflags, 8, 34, 40, C_FG_WHITE | C_BG_LIGHT_GREY );
+
+	print_hex( info_debug.cr0, 8, 45, 10, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.cr2, 8, 45, 12, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.cr3, 8, 45, 14, C_FG_WHITE | C_BG_LIGHT_GREY );
+	print_hex( info_debug.cr4, 8, 45, 16, C_FG_WHITE | C_BG_LIGHT_GREY );
+}
+
+void restaurar_pantalla()
+{
+	// Vuelvo a pintar la pantalla con la info contenida en el buffer
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+
+	for (int i = 0; i < 50; ++i)
+	{
+		for (int j = 0; j < 78; ++j)
+		{
+			p[i][j] = buffer_pantalla[i][j];
+		}
+	}
+}
 

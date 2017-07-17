@@ -30,5 +30,7 @@ void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short at
 
 void actualizar_info_pantalla();
 void actualizar_relojes();
+void imprimir_pantalla_debug();
+void restaurar_pantalla();
 
 #endif  /* !__SCREEN_H__ */

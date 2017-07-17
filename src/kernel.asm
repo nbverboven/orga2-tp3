@@ -140,11 +140,11 @@ modoprotegido:
 	; Inicializar pantalla
 	xor ebx, ebx				
 
-limpiar_pantalla:
-	mov dword [fs:ebx], 0x20202020 ; pinto de verde
-	add ebx, 4
-	cmp ebx, 8000
-	jl limpiar_pantalla
+	limpiar_pantalla:
+		mov dword [fs:ebx], 0x20202020 ; pinto de verde
+		add ebx, 4
+		cmp ebx, 8000
+		jl limpiar_pantalla
 	
 	pintar_pantalla
 
