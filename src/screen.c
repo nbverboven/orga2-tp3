@@ -39,10 +39,8 @@ struct {
 	unsigned int   stack5;
 } __attribute__((__packed__)) info_debug;
 
-// En esta variable voy a guardar la info de la pantalla
-// para no perderla cuando imprimo la pantalla de debug
-ca (*buffer_pantalla)[VIDEO_COLS];
 
+unsigned int pagina_aux;
 
 
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr)
@@ -187,16 +185,17 @@ void actualizar_relojes()
 void imprimir_pantalla_debug()
 {
 	// Guardo la pantalla actual
-	// ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+	ca (*buffer_pantalla)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) pagina_aux;
 
-	// for (int i = 1; i < 45; ++i)
-	// {
-	// 	for (int j = 1; j < 79; ++j)
-	// 	{
-	// 		buffer_pantalla[i][j].c = p[i][j].c;
-	// 		buffer_pantalla[i][j].a = p[i][j].a;
-	// 	}
-	// }
+	for (int i = 1; i < 45; ++i)
+	{
+		for (int j = 1; j < 79; ++j)
+		{
+			buffer_pantalla[i][j].c = (unsigned char) p[i][j].c;
+			buffer_pantalla[i][j].a = (unsigned char) p[i][j].a;
+		}
+	}
 
 	// Pinto la pantalla de debug
 	for (int i = 7; i < 43; ++i)
@@ -286,10 +285,12 @@ void imprimir_pantalla_debug()
 	print_hex( info_debug.cr4, 8, 45, 16, C_FG_WHITE | C_BG_LIGHT_GREY );
 }
 
+
 void restaurar_pantalla()
 {
 	// Vuelvo a pintar la pantalla con la info contenida en el buffer
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+	ca (*buffer_pantalla)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) pagina_aux;
 
 	for (int i = 1; i < 45; ++i)
 	{
@@ -301,3 +302,20 @@ void restaurar_pantalla()
 	}
 }
 
+
+// Ay, que cosa horrible. jaja
+void inicializar_pagina_video()
+{
+	pagina_aux = mmu_proxima_pagina_fisica_libre();	
+
+	ca (*buffer_pantalla)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) pagina_aux;
+
+	for (int i = 0; i < 50; ++i)
+	{
+		for (int j = 0; j < 80; ++j)
+		{
+			buffer_pantalla[i][j].c = 0;
+			buffer_pantalla[i][j].a = 0;
+		}
+	}
+}

@@ -32,5 +32,6 @@ void actualizar_info_pantalla();
 void actualizar_relojes();
 void imprimir_pantalla_debug();
 void restaurar_pantalla();
+void inicializar_pagina_video();
 
 #endif  /* !__SCREEN_H__ */

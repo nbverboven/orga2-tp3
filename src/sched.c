@@ -54,6 +54,8 @@ void sched_inicializar()
 
 	print( i, infoJuego.jugador_A.posicion_x, infoJuego.jugador_A.posicion_y+1, C_FG_WHITE | C_BG_RED  );
 	print( j, infoJuego.jugador_B.posicion_x, infoJuego.jugador_B.posicion_y+1, C_FG_WHITE | C_BG_BLUE  );
+	
+	inicializar_pagina_video();
 }
 
 

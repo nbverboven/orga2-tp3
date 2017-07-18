@@ -259,7 +259,7 @@ _isr33:
 		cmp byte [mostrando_pantalla_debug], 1
 		jne .no_mostraba_nada
 
-		; call restaurar_pantalla
+		call restaurar_pantalla
 		imprimir_texto_mp  msg_int_Y, len_msg_Y, 0x00, 0, 0
 		mov byte [mostrando_pantalla_debug], 0
 		jmp .fin
