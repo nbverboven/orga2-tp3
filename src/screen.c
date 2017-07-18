@@ -187,15 +187,16 @@ void actualizar_relojes()
 void imprimir_pantalla_debug()
 {
 	// Guardo la pantalla actual
-	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+	// ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
 
-	for (int i = 0; i < 50; ++i)
-	{
-		for (int j = 0; j < 78; ++j)
-		{
-			buffer_pantalla[i][j] = p[i][j];
-		}
-	}
+	// for (int i = 1; i < 45; ++i)
+	// {
+	// 	for (int j = 1; j < 79; ++j)
+	// 	{
+	// 		buffer_pantalla[i][j].c = p[i][j].c;
+	// 		buffer_pantalla[i][j].a = p[i][j].a;
+	// 	}
+	// }
 
 	// Pinto la pantalla de debug
 	for (int i = 7; i < 43; ++i)
@@ -290,11 +291,12 @@ void restaurar_pantalla()
 	// Vuelvo a pintar la pantalla con la info contenida en el buffer
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
 
-	for (int i = 0; i < 50; ++i)
+	for (int i = 1; i < 45; ++i)
 	{
-		for (int j = 0; j < 78; ++j)
+		for (int j = 1; j < 79; ++j)
 		{
-			p[i][j] = buffer_pantalla[i][j];
+			p[i][j].c = buffer_pantalla[i][j].c;
+			p[i][j].a = buffer_pantalla[i][j].a;
 		}
 	}
 }

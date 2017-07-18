@@ -26,7 +26,6 @@ void sched_inicializar()
 	infoJuego.jugador_B.proximo_zombie_a_lanzar = guerrero;
 	infoJuego.jugador_B.puntaje_actual = 0;
 
-	infoJuego.modo_debug_on = 0;
 	infoJuego.jugador_de_turno = 1; // Cuando se busque a primera tarea, esto cambia al jugador A
 	infoJuego.tarea_actual_A = 0;
 	infoJuego.tarea_actual_B = 0;
@@ -139,7 +138,7 @@ unsigned short sched_proxima_tss_libre(unsigned int jugador)
 
 void sched_desalojar_tarea_actual()
 {
-	// Buso el jugador cuya tarea podujo la excepción
+	// Busco el jugador cuya tarea podujo la excepción
 	unsigned char j = infoJuego.jugador_de_turno;
 	unsigned int x;
 	unsigned int y;

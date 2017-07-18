@@ -65,6 +65,8 @@ void tss_inicializar_idle()
 	tss_idle.ebx    = 0;
 	tss_idle.ecx    = 0;
 	tss_idle.edx    = 0;
+
+	tss_idle.iomap  = 0xFFFF;
 }
 
 
@@ -95,6 +97,8 @@ void tss_inicializar_zombie(unsigned int codigo_zombie, unsigned int jugador, un
 		tss_zombie->ebx    = 0;
 		tss_zombie->ecx    = 0;
 		tss_zombie->edx    = 0;
+
+		tss_zombie->iomap  = 0xFFFF;
 	}
 }
 

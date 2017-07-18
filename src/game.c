@@ -10,7 +10,7 @@ void game_jugador_mover(unsigned int value)
 {
 	const char* asd;
 	const char* tz;
-	unsigned short attr;
+	// unsigned short attr;
 
 	switch ( value )
 	{
@@ -118,25 +118,25 @@ void game_jugador_mover(unsigned int value)
 		/************** Fin teclas jugador B **************/
 
 
-		/*************** Tecla modo debug *****************/
+		// /*************** Tecla modo debug *****************/
 
-		// Y
-		case 0x15:
-			//TODO guardar pantalla
-			infoJuego.modo_debug_on = !infoJuego.modo_debug_on;
-			asd = (const char*) "Modo debug on";
+		// // Y
+		// case 0x15:
+		// 	//TODO guardar pantalla
+		// 	infoJuego.modo_debug_on = !infoJuego.modo_debug_on;
+		// 	asd = (const char*) "Modo debug on";
 
-			if ( !infoJuego.modo_debug_on )
-			{
-				attr = ( C_FG_BLACK | C_BG_BLACK );
-			}
-			else
-			{
-				attr = ( C_FG_LIGHT_BROWN | C_BG_BLACK );
-			}
+		// 	if ( !infoJuego.modo_debug_on )
+		// 	{
+		// 		attr = ( C_FG_BLACK | C_BG_BLACK );
+		// 	}
+		// 	else
+		// 	{
+		// 		attr = ( C_FG_LIGHT_BROWN | C_BG_BLACK );
+		// 	}
 
-			print( asd, 35, 0, attr );
-			break;
+		// 	print( asd, 35, 0, attr );
+		// 	break;
 	}
 }
 
@@ -304,9 +304,4 @@ unsigned int game_dame_codigo(zombie_type tipo, unsigned char j)
 	}
 
 	return res;
-}
-
-unsigned char is_mode_debug_on()
-{
-	return infoJuego.modo_debug_on;
 }

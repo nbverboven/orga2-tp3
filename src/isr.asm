@@ -68,6 +68,8 @@ len_int_18 equ $ - msg_int_18
 msg_int_19 db 'SIMD Floating-Point Exception! :('
 len_int_19 equ $ - msg_int_19
 
+msg_int_Y db 'Modo Debug On'
+len_msg_Y equ $ - msg_int_Y
 
 ;; PIC
 extern fin_intr_pic1
@@ -95,10 +97,8 @@ extern info_debug
 global _isr%1
 
 _isr%1:
-	; pushad
-
-	; mov eax, %1
-	imprimir_texto_mp  msg_int_%1, len_int_%1, 0x07, 0, 0
+	cmp byte [estoy_en_modo_debug], 1
+	jne .solo_desalojo
 
 	mov dword [info_debug + 0], eax
 	mov dword [info_debug + 4], ebx
@@ -138,21 +138,26 @@ _isr%1:
 	mov eax, [esp + 20]
 	mov dword [info_debug + 84], eax
 
-	call imprimir_pantalla_debug
+	.solo_desalojo:
+		call sched_desalojar_tarea_actual
 
-; Esto está para ver como queda. Después se comenta o se saca
-jmp $
+		cmp byte [estoy_en_modo_debug], 0
+		je .fin
 
-	call sched_desalojar_tarea_actual
+		cmp byte [mostrando_pantalla_debug], 0
+		jne .fin
 
-	mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. índice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
-	mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle
-	jmp far [sched_tarea_offset]
+		imprimir_texto_mp  msg_int_Y, len_msg_Y, 0x07, 0, 0
+		mov byte [mostrando_pantalla_debug], 1
+		call imprimir_pantalla_debug
 
-	; popad
-	iret
-
+	.fin:
+		mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. índice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
+		mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle
+		jmp far [sched_tarea_offset]
+		iret
 %endmacro
+
 
 ;;
 ;; Datos
@@ -198,17 +203,26 @@ _isr32:
 
 	call fin_intr_pic1
 	call proximo_reloj
+
+	cmp byte [mostrando_pantalla_debug], 1
+	je .salto_a_la_idle
+
 	call actualizar_info_pantalla
 	call sched_proximo_indice
+	jmp .salto_al_proximo_indice
 
-	cmp ax, 0
-	je .fin
+	.salto_a_la_idle:
+		mov ax, 0x0070
 
-	cmp ax, [sched_tarea_selector]
-	je .fin
+	.salto_al_proximo_indice:
+		cmp ax, 0
+		je .fin
 
-	mov [sched_tarea_selector], ax
-	jmp far [sched_tarea_offset]
+		cmp ax, [sched_tarea_selector]
+		je .fin
+
+		mov [sched_tarea_selector], ax
+		jmp far [sched_tarea_offset]
 
 	.fin:
 		popfd
@@ -224,18 +238,46 @@ _isr33:
 	pushad
 	pushfd
 
+	call fin_intr_pic1
 	xor eax, eax
 	in al, 0x60
-	
+	cmp al, 0x15
+	je .atiendoY
+
+	cmp byte [mostrando_pantalla_debug], 1 ; Los jugadores no pueden hacer nada mientras muestro
+	je .fin                                ; la info de debug
+
 	push eax
 	call game_jugador_mover
 	add esp, 4
+	jmp .fin
 
-	call fin_intr_pic1
+	.atiendoY:
+		cmp byte [estoy_en_modo_debug], 1
+		jne .activo_modo_debug
 
-	popfd
-	popad
-	iret
+		cmp byte [mostrando_pantalla_debug], 1
+		jne .no_mostraba_nada
+
+		; call restaurar_pantalla
+		imprimir_texto_mp  msg_int_Y, len_msg_Y, 0x00, 0, 0
+		mov byte [mostrando_pantalla_debug], 0
+		jmp .fin
+
+		.no_mostraba_nada:
+			imprimir_texto_mp  msg_int_Y, len_msg_Y, 0x00, 0, 35
+			mov byte [estoy_en_modo_debug], 0
+			jmp .fin
+
+		.activo_modo_debug:
+			imprimir_texto_mp  msg_int_Y, len_msg_Y, 0x07, 0, 35
+			mov byte [estoy_en_modo_debug], 1
+
+	.fin:
+		popfd
+		popad
+		iret
+
 
 ;;
 ;; Rutinas de atención de las SYSCALLS
@@ -249,24 +291,16 @@ global _isr102 ; int 0x66
 _isr102:
 	pushad
 	pushfd
-
-	push eax	
-	; call is_mode_debug_on
-	; cmp ax, 0
-	; je .debug_off
-	; 	call ventana_debug
-	; 	jmp .fin
-
-	; .debug_off:
-		call game_move_current_zombi
-		;call sched_ejecutar_orden_66
-		add esp, 4
-
-		mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. índice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
-		mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle
-		jmp far [sched_tarea_offset]
+	
+	push eax
+	call game_move_current_zombi
+	add esp, 4
 
 	.fin:
+	mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. índice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
+	mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle
+	jmp far [sched_tarea_offset]
+
 		popfd
 		popad
 	iret
@@ -287,5 +321,3 @@ proximo_reloj:
 		imprimir_texto_mp ebx, 1, 0x0f, 49, 79
 		popad
 	ret
-
-

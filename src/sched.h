@@ -39,7 +39,6 @@ typedef struct str_task_info {
 
 
 typedef struct str_info_juego {
-	unsigned char modo_debug_on;
 	const char*   zombies_disponibles[3];
 	unsigned char jugador_de_turno;
 	jugador       jugador_A;
