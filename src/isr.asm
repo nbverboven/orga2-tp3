@@ -162,10 +162,11 @@ _isr%1:
 ;; Datos
 ;; -------------------------------------------------------------------------- ;;
 ; Scheduler
-isrnumero:              dd 0x00000000
-isrClock:               db '|/-\'
-estoy_en_modo_debug:    db 0
+isrnumero:                dd 0x00000000
+isrClock:                 db '|/-\'
+estoy_en_modo_debug:      db 0
 mostrando_pantalla_debug: db 0
+doomsday_clock:           dw 10000 ; Detiene el juego automáticamente cuando llega a 0
 
 
 ;;
@@ -200,15 +201,25 @@ _isr32:
 	pushad
 	pushfd
 
-	call fin_intr_pic1
-	call proximo_reloj
+	mov ax, [doomsday_clock]
+	dec ax
+	cmp ax, 0
+	jne .el_juego_continua
 
-	cmp byte [mostrando_pantalla_debug], 1
-	je .salto_a_la_idle
+	hlt
 
-	call actualizar_info_pantalla
-	call sched_proximo_indice
-	jmp .salto_al_proximo_indice
+	.el_juego_continua:
+		mov [doomsday_clock], ax
+
+		call fin_intr_pic1
+		call proximo_reloj
+
+		cmp byte [mostrando_pantalla_debug], 1
+		je .salto_a_la_idle
+
+		call actualizar_info_pantalla
+		call sched_proximo_indice
+		jmp .salto_al_proximo_indice
 
 	.salto_a_la_idle:
 		mov ax, 0x0070
