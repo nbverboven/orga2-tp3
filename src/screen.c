@@ -40,9 +40,6 @@ struct {
 } __attribute__((__packed__)) info_debug;
 
 
-unsigned int pagina_aux;
-
-
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr)
 {
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
@@ -184,16 +181,16 @@ void actualizar_relojes()
 
 void imprimir_pantalla_debug()
 {
-	// Guardo la pantalla actual
+	// Guardo la pantalla actual 
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
-	ca (*buffer_pantalla)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) pagina_aux;
+	ca (*buffer_pantalla)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) 0xBF93F;
 
 	for (int i = 1; i < 45; ++i)
 	{
 		for (int j = 1; j < 79; ++j)
 		{
-			buffer_pantalla[i][j].c = (unsigned char) p[i][j].c;
-			buffer_pantalla[i][j].a = (unsigned char) p[i][j].a;
+			buffer_pantalla[i][j].c = p[i][j].c;
+			buffer_pantalla[i][j].a = p[i][j].a;
 		}
 	}
 
@@ -290,7 +287,7 @@ void restaurar_pantalla()
 {
 	// Vuelvo a pintar la pantalla con la info contenida en el buffer
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
-	ca (*buffer_pantalla)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) pagina_aux;
+	ca (*buffer_pantalla)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) 0xB9F3F;
 
 	for (int i = 1; i < 45; ++i)
 	{
@@ -300,11 +297,4 @@ void restaurar_pantalla()
 			p[i][j].a = buffer_pantalla[i][j].a;
 		}
 	}
-}
-
-
-// Ay, que cosa horrible. jaja
-void inicializar_pagina_video()
-{
-	pagina_aux = mmu_proxima_pagina_fisica_libre();	
 }
