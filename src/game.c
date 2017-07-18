@@ -116,27 +116,6 @@ void game_jugador_mover(unsigned int value)
 			break;
 
 		/************** Fin teclas jugador B **************/
-
-
-		// /*************** Tecla modo debug *****************/
-
-		// // Y
-		// case 0x15:
-		// 	//TODO guardar pantalla
-		// 	infoJuego.modo_debug_on = !infoJuego.modo_debug_on;
-		// 	asd = (const char*) "Modo debug on";
-
-		// 	if ( !infoJuego.modo_debug_on )
-		// 	{
-		// 		attr = ( C_FG_BLACK | C_BG_BLACK );
-		// 	}
-		// 	else
-		// 	{
-		// 		attr = ( C_FG_LIGHT_BROWN | C_BG_BLACK );
-		// 	}
-
-		// 	print( asd, 35, 0, attr );
-		// 	break;
 	}
 }
 
