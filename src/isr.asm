@@ -147,7 +147,6 @@ _isr%1:
 		cmp byte [mostrando_pantalla_debug], 0
 		jne .fin
 
-		imprimir_texto_mp  msg_int_Y, len_msg_Y, 0x07, 0, 0
 		mov byte [mostrando_pantalla_debug], 1
 		call imprimir_pantalla_debug
 
@@ -260,7 +259,6 @@ _isr33:
 		jne .no_mostraba_nada
 
 		call restaurar_pantalla
-		imprimir_texto_mp  msg_int_Y, len_msg_Y, 0x00, 0, 0
 		mov byte [mostrando_pantalla_debug], 0
 		jmp .fin
 

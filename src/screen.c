@@ -307,15 +307,4 @@ void restaurar_pantalla()
 void inicializar_pagina_video()
 {
 	pagina_aux = mmu_proxima_pagina_fisica_libre();	
-
-	ca (*buffer_pantalla)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) pagina_aux;
-
-	for (int i = 0; i < 50; ++i)
-	{
-		for (int j = 0; j < 80; ++j)
-		{
-			buffer_pantalla[i][j].c = 0;
-			buffer_pantalla[i][j].a = 0;
-		}
-	}
 }
