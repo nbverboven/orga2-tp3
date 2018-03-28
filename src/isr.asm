@@ -305,14 +305,13 @@ _isr102:
 	call game_move_current_zombi
 	add esp, 4
 
-	.fin:
-		mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. índice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
-		mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle
-		jmp far [sched_tarea_offset]
+	mov ax, 0x0070 ; 0x0070 = 0000 0000 0111 0000. índice = 0000000001110 (14)  gdt/ldt = 0  dpl = 00 
+	mov [sched_tarea_selector], ax ; Cargo el selector de tss de la tarea idle
+	jmp far [sched_tarea_offset]
 
-		popfd
-		popad
-		iret
+	popfd
+	popad
+	iret
 
 
 ;; Funciones Auxiliares
