@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "defines.h": "c",
-        "sched.h": "c",
-        "game.h": "c"
-    }
-}
