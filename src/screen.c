@@ -103,8 +103,8 @@ void actualizar_info_pantalla()
 	print_int(infoJuego.jugador_A.puntaje_actual, 37, 47, C_FG_WHITE | C_BG_RED); // A
 	print_int(infoJuego.jugador_B.puntaje_actual, 43, 47, C_FG_WHITE | C_BG_BLUE); // B
 
-	// Hago esto porque si no, por alguna razón que no me puse a pensar, pasa de escribir
-	// 10 a escribir 19 cuando le resto un zombie. Lo mismo vale para lo que está más abajo
+	// Hago esto porque, si no, el puntaje que se muestra en pantalla es, por poner un
+	// ejemplo, 5 en lugar de 05. Solo se aplica para valores desde 0 hasta 9.
 	if ( infoJuego.jugador_A.puntaje_actual < 10 )
 	{
 		print_int(0, 36, 47, C_FG_WHITE | C_BG_RED);
@@ -119,6 +119,7 @@ void actualizar_info_pantalla()
 	print_int(infoJuego.jugador_A.zombies_restantes, 31, 47, C_FG_WHITE | C_BG_RED); // A
 	print_int(infoJuego.jugador_B.zombies_restantes, 49, 47, C_FG_WHITE | C_BG_BLUE); // B
 
+	// Hago esto porque, si no, pasa de escribir 10 a escribir 19 cuando le resto un zombie. 
 	if ( infoJuego.jugador_A.zombies_restantes < 10 )
 	{
 		print_int(0, 30, 47, C_FG_WHITE | C_BG_RED);
