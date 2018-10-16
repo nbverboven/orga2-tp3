@@ -208,6 +208,13 @@ void game_move_current_zombi(direccion dir)
 		case IZQ:
 			actual->z_posicion_y = ((actual->z_posicion_y)+43+2*j)%44;
 			mmu_desmapear_paginas_zombie( CR3 );
+			
+			/* El primer parámetro de mmu_mapear_paginas_zombie es la dirección desde 
+			   donde se debe copiar el código de la tarea. No es 0x08000000 porque primero
+			   se actualiza la posición del zombié y recién después se realiza el remapeo
+			   de las páginas. Entonces. como el zombie se mueve hacia la izquierda, el código
+			   de la tarea se encuentra a la derecha de la nueva posición, y esto es lo que 
+			   vendría a representar el 0x08004000. */
 			mmu_mapear_paginas_zombie( 0x08004000, j, CR3, actual->z_posicion_x, actual->z_posicion_y );
 			break;
 
